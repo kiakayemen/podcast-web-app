@@ -1,7 +1,7 @@
 html,
 body {
-  padding: 0;
-  margin: 0;
+  padding: 10px;
+  background-color: #e5e5e5;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -13,4 +13,30 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  align-items: stretch;
+  justify-content: space-between;
+
+}
+.header .left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: space-between;
+  column-gap: 10px;
+}
+.header .right {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.header-icons {
+  vertical-align: center;
+  font-size: 25px;
 }
