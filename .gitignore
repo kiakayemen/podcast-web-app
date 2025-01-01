@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# Ignore audio files
+/public/media/audio-file.mp3
+
 # next.js
 /.next/
 /out/

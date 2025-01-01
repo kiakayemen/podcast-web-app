@@ -3,6 +3,7 @@ import ReactPlayer from "react-player";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
+import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
 import { Select, Form, Slider } from "antd";
 import Loader from "./Loader";
@@ -222,9 +223,11 @@ const EpisodeDisplay = () => {
             </div>
           </div>
           <label className="w-[70px]" htmlFor="progress-bar">
-            {
-              convertTime(playerRef.current?.getDuration())
-            }
+            {playerRef.current ? (
+              convertTime(playerRef.current.getDuration())
+            ) : (
+              <CircleLoader color="#57b98c" className="ml-2"/>
+            )}
           </label>
         </div>
         {/* volume & playback rate */}
