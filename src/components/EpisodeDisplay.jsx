@@ -3,7 +3,7 @@ import ReactPlayer from "react-player";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Select, Form, Slider } from "antd";
 import Loader from "./Loader";
 import Image from "next/image";
@@ -14,7 +14,8 @@ const EpisodeDisplay = () => {
   const [loaded, setLoaded] = useState(0);
   const [timePlayed, setTimePlayed] = useState(0);
   const [percentagePlayed, setPercentagePlayed] = useState(0);
-  const [volume, setVolume] = useState(100)
+  const [volume, setVolume] = useState(100);
+  const [isDragging, setIsDragging] = useState(false);
 
   const convertTime = (num) => {
     let hours = Math.floor(num / 3600);
@@ -34,19 +35,31 @@ const EpisodeDisplay = () => {
     return convertedTime;
   };
 
-  const handleProgressClick = (e) => {
+  const handleMouseDown = () => setIsDragging(true);
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
     const progressBar = e.currentTarget;
     const boundingRect = progressBar.getBoundingClientRect(); // Get the progress bar's dimensions
     const clickX = e.clientX - boundingRect.left; // Mouse X position relative to the progress bar
     const barWidth = progressBar.offsetWidth;
     const progressFraction = clickX / barWidth; // Fraction of progress bar clicked
     const clampedProgressFraction = Math.min(1, Math.max(0, progressFraction));
-    if (playerRef.current) {
-      const duration = playerRef.current.getDuration();
-      const newTime = clampedProgressFraction * duration;
-      setTimePlayed(newTime);
-      playerRef.current.seekTo(clampedProgressFraction);
-    }
+    const duration = playerRef.current?.getDuration();
+    setPercentagePlayed(clampedProgressFraction * 100);
+    setTimePlayed(clampedProgressFraction * duration);
+  };
+
+  const handleMouseUp = (e) => {
+    const progressBar = e.currentTarget;
+    const boundingRect = progressBar.getBoundingClientRect();
+    const clickX = e.clientX - boundingRect.left;
+    const barWidth = progressBar.offsetWidth;
+    const progressFraction = clickX / barWidth;
+    const clampedProgressFraction = Math.min(1, Math.max(0, progressFraction));
+    setIsDragging(false);
+    playerRef.current?.seekTo(clampedProgressFraction);
   };
 
   return (
@@ -108,17 +121,19 @@ const EpisodeDisplay = () => {
         fallback={<Loader />}
         ref={playerRef}
         onProgress={(data) => {
-          setLoaded(data.loaded);
-          setTimePlayed(data.playedSeconds);
-          setPercentagePlayed(data.played * 100);
+          if (!isDragging) {
+            setLoaded(data.loaded);
+            setTimePlayed(data.playedSeconds);
+            setPercentagePlayed(data.played * 100);
+          }
         }}
-        volume={volume/100}
+        volume={volume / 100}
         progressInterval={100}
         controls={false}
         playbackRate={playbackRate}
         height={30}
         playing={isPlaying}
-        url="/media/audio-file.mp3"
+        url="https://stitcher2.acast.com/livestitches/8970a8fd61620ca9925c21943a0fc0a4.mp3?aid=6736c112ba4404855a63e8c5&chid=625bd31dc030a00012e0dba7&ci=kensc6nOo1TwFHW5-_GHfq98Q8ZOXgyHIqYsyLBofXZBYmzNDKxIPA%3D%3D&pf=rss&range=bytes%3D0-&sv=sphinx%401.227.0&uid=a345ffcf1c438ca26da224e960d25ee3&Expires=1735595001186&Key-Pair-Id=K38CTQXUSD0VVB&Signature=ClphBgg92xYCuL6p37qM9Z7cSKYDauzKPnfijAzN8JJCJs65Dlrh6S6Irt6WpZEEn5mcwHdsu3WccxRkvAvxAZSvT7IwrmYSuqgfE7O13k-38MmT4XefV0RgnCGUtz8mV41o-D0rC4r9wUiRBbfugTa-Fe~r4R9MzDA2QsPsPgizbITAR7nweFay5fKsX3yVdDP2uM52UdNqBKEmSOWhJAhX2XThZdQwGEy5z8puao0fieKtkl9VL8LFTEtL9zztJcvkOcKXSGlrleR5b7wuk2RWFxNFotGnrCe8f0acDEkgOLpOGzZLzjRJMpiU4bOwepXVtsWmlSfV4~SLaqB6OA__"
       />
       {/* controls, progress bar & playback rate Container */}
       <div className="container flex justify-evenly gap-10">
@@ -165,39 +180,63 @@ const EpisodeDisplay = () => {
         </div>
         {/* progress bar */}
         <div className="flex gap-4 items-center">
-          <label className="w-[70px]" htmlFor="progress-bar">{convertTime(timePlayed)}</label>
+          <label className="w-[70px]" htmlFor="progress-bar">
+            {convertTime(timePlayed)}
+          </label>
           <div
-            id="progress-bar"
-            onClick={(e) => handleProgressClick(e)}
-            width="100%"
-            className="cursor-pointer bg-white relative rounded-xl overflow-hidden "
+            onMouseDown={(e) => handleMouseDown(e)}
+            onMouseMove={(e) => handleMouseMove(e)}
+            onMouseUp={(e) => handleMouseUp(e)}
+            className="h-3 cursor-pointer overflow-hidden flex items-center"
           >
             <div
+              id="progress-bar"
+              width="100%"
+              className=" bg-white relative rounded-xl overflow-visible"
+            >
+              {/* playing fraction */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
+                  transition: "transform",
+                }}
+                className={`bg-accentColor rounded-s-xl`}
+              ></div>
+              {/* bullet at the end as an indicator */}
+              <div
+                style={{
+                  left: `${percentagePlayed}%`,
+                }}
+                className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1  bottom-0 absolute"
+              ></div>
+              {/* downloaded fraction */}
+              {/* <div
               style={{
-                width: `${percentagePlayed}%`,
+                width: `${loaded * 100}%`,
                 transition: "width 0.1s ease-in",
-              }}
-              className={`bg-accentColor z-20 top-0 left-0 bottom-0 absolute rounded-s-xl`}
-            ></div>
-            <div
-              style={{
-                width: `${loaded*100}%`,
-                transition: "width 0.1s ease-in",
-              }}
-              className={`bg-gray-300 z-10 top-0 left-0 bottom-0 absolute rounded-s-xl`}
-            ></div>
+                }}
+                className={`bg-gray-300 top-0 left-0 bottom-0 absolute rounded-s-xl`}
+                ></div> */}
+            </div>
           </div>
+          <label className="w-[70px]" htmlFor="progress-bar">
+            {
+              convertTime(playerRef.current?.getDuration())
+            }
+          </label>
         </div>
         {/* volume & playback rate */}
         <div className="flex w-1/5 justify-evenly items-center">
           <Form.Item noStyle>
-            <Slider className="w-32 flex justify-center" onChange={value => setVolume
-              (value)} value={volume}/>
+            <Slider
+              className="w-32"
+              onChange={(value) => setVolume(value)}
+              value={volume}
+            />
+            
           </Form.Item>
-          {/* <input type="range" min={0} max={100} step={1} value={volume} onChange={(e) => {
-            setVolume(e.target.value)
-          }
-          }/> */}
           <Select
             defaultValue="x1"
             style={{

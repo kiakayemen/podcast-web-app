@@ -12,6 +12,9 @@ export default {
         foreground: "var(--foreground)",
         accentColor: "var(--accent-color)",
       },
+      scale: {
+        '200': '2',
+      }
     },
   },
   plugins: [],
