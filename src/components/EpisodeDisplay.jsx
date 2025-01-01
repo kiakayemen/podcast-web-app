@@ -235,7 +235,6 @@ const EpisodeDisplay = () => {
               onChange={(value) => setVolume(value)}
               value={volume}
             />
-            
           </Form.Item>
           <Select
             defaultValue="x1"
