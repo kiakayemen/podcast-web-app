@@ -1,5 +1,4 @@
 "use client";
-import ReactPlayer from "react-player";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
@@ -8,6 +7,8 @@ import { useState, useRef, useEffect } from "react";
 import { Select, Form, Slider } from "antd";
 import Loader from "./Loader";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = () => {
   const playerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
