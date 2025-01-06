@@ -65,23 +65,23 @@ const EpisodeDisplay = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center lg:min-w-[1000px]">
-      <div className="flex flex-row gap-10 justify-center items-stretch">
+    <div className="flex flex-col w-full max-w-screen-lg mx-auto">
+      <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start">
         <Image
           width={180}
           className="rounded-xl"
+          alt="Episode Cover"
           height={180}
           src={
             "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg"
           }
-          alt="Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا"
         ></Image>
 
-        <div className="flex flex-col justify-between">
-          <h2 className="flex text-2xl justify-center">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl text-center sm:text-left font-bold">
             Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا
           </h2>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <p className="flex items-center gap-1 text-lg">
               {/* duration */}
               <FaClock size={12} />
@@ -99,23 +99,21 @@ const EpisodeDisplay = () => {
             </p>
           </div>
           {/* summary */}
-          <div className="flex items-center pr-4">
-            <p className="text-lg" dir="rtl">
+            <p className="text-lg text-right">
               در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
               چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت
               در حال تحول بخش لجستیک ایران صحبت کردیم.
             </p>
-          </div>
           <div className="flex items-start">
             <button
               className="flex items-center gap-3 rounded py-2 px-4 bg-accentColor"
               onClick={() => {
-                setIsPlaying(true);
+                setIsPlaying(!isPlaying);
               }}
             >
-              <FaPlay />
-              Play Episode
-            </button>
+              {isPlaying ? <FaPause /> : <FaPlay />}
+              {isPlaying ? "Pause Episode" : "Play Episode"}
+              </button>
           </div>
         </div>
       </div>
@@ -129,21 +127,23 @@ const EpisodeDisplay = () => {
             setPercentagePlayed(data.played * 100);
           }
         }}
+        className="my-6"
         volume={volume / 100}
         progressInterval={100}
         controls={false}
         playbackRate={playbackRate}
-        height={30}
+        width="100%"
+        height="50px"
         playing={isPlaying}
         url="https://stitcher2.acast.com/livestitches/8970a8fd61620ca9925c21943a0fc0a4.mp3?aid=6736c112ba4404855a63e8c5&chid=625bd31dc030a00012e0dba7&ci=kensc6nOo1TwFHW5-_GHfq98Q8ZOXgyHIqYsyLBofXZBYmzNDKxIPA%3D%3D&pf=rss&range=bytes%3D0-&sv=sphinx%401.227.0&uid=a345ffcf1c438ca26da224e960d25ee3&Expires=1735595001186&Key-Pair-Id=K38CTQXUSD0VVB&Signature=ClphBgg92xYCuL6p37qM9Z7cSKYDauzKPnfijAzN8JJCJs65Dlrh6S6Irt6WpZEEn5mcwHdsu3WccxRkvAvxAZSvT7IwrmYSuqgfE7O13k-38MmT4XefV0RgnCGUtz8mV41o-D0rC4r9wUiRBbfugTa-Fe~r4R9MzDA2QsPsPgizbITAR7nweFay5fKsX3yVdDP2uM52UdNqBKEmSOWhJAhX2XThZdQwGEy5z8puao0fieKtkl9VL8LFTEtL9zztJcvkOcKXSGlrleR5b7wuk2RWFxNFotGnrCe8f0acDEkgOLpOGzZLzjRJMpiU4bOwepXVtsWmlSfV4~SLaqB6OA__"
       />
       {/* controls, progress bar & playback rate Container */}
-      <div className="container flex justify-evenly gap-10">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
         {/* controls */}
-        <div className="flex gap-2 items-center justify-evenly">
+        <div className="flex gap-4">
           <RiReplay15Fill
             size={40}
-            className="cursor-pointer bg-accentColor rounded-full p-1"
+            className="cursor-pointer text-accentColor rounded-full p-1"
             onClick={() => {
               const newTime = Math.max(0, timePlayed - 15);
               setTimePlayed(newTime);
@@ -154,20 +154,20 @@ const EpisodeDisplay = () => {
           />
           {isPlaying ? (
             <FaPause
-              className="cursor-pointer bg-accentColor rounded p-1"
+              className="cursor-pointer text-accentColor rounded p-1"
               onClick={() => setIsPlaying(!isPlaying)}
               size={45}
             />
           ) : (
             <FaPlay
-              className="cursor-pointer bg-accentColor rounded p-1"
+              className="cursor-pointer text-accentColor rounded p-1"
               onClick={() => setIsPlaying(!isPlaying)}
               size={45}
             />
           )}
           <RiForward15Fill
             size={40}
-            className="cursor-pointer bg-accentColor rounded-full p-1"
+            className="cursor-pointer text-accentColor rounded-full p-1"
             onClick={() => {
               const newTime = Math.min(
                 playerRef.current.getDuration(),
@@ -181,7 +181,7 @@ const EpisodeDisplay = () => {
           />
         </div>
         {/* progress bar */}
-        <div className="flex gap-4 items-center">
+        <div className="flex-1 flex items-center gap-4">
           <label className="w-[70px]" htmlFor="progress-bar">
             {convertTime(timePlayed)}
           </label>
@@ -193,8 +193,7 @@ const EpisodeDisplay = () => {
           >
             <div
               id="progress-bar"
-              width="100%"
-              className=" bg-white relative rounded-xl overflow-visible"
+              className="w-full bg-white relative rounded-xl overflow-visible"
             >
               {/* playing fraction */}
               <div

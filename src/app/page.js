@@ -7,9 +7,9 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-8 justify-center">
+      <div className="flex w-full flex-col items-center gap-8 justify-center">
         <h1 className="text-2xl font-bold">podcast web app</h1>
-        <div className="flex items-center">
+        <div className="flex w-full items-center">
           <EpisodeDisplay />
         </div>
       </div>
