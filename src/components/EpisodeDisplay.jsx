@@ -1,11 +1,10 @@
 "use client";
-import { FaPlay, FaPause, FaCalendar, FaVolumeUp } from "react-icons/fa";
+import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
-import { Select } from "antd";
-import Loader from "./Loader";
+import { Select, ConfigProvider } from "antd";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import VolumeControl from "./VolumeControl";
@@ -101,26 +100,26 @@ const EpisodeDisplay = () => {
             </p>
           </div>
           {/* summary */}
-            <p className="text-lg text-right">
-              در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
-              چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت
-              در حال تحول بخش لجستیک ایران صحبت کردیم.
-            </p>
+          <p className="text-lg text-right" dir="rtl">
+            در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
+            چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت در
+            حال تحول بخش لجستیک ایران صحبت کردیم.
+          </p>
           <div className="flex items-start">
             <button
-              className="flex items-center gap-3 rounded py-2 px-4 bg-accentColor"
+              className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background gap-3 rounded py-2 px-4 bg-accentColor"
               onClick={() => {
                 setIsPlaying(!isPlaying);
               }}
             >
               {isPlaying ? <FaPause /> : <FaPlay />}
               {isPlaying ? "Pause Episode" : "Play Episode"}
-              </button>
+            </button>
           </div>
         </div>
       </div>
       <ReactPlayer
-        fallback={<Loader />}
+        fallback={<CircleLoader color="#1ed760"/>}
         ref={playerRef}
         onProgress={(data) => {
           if (!isDragging) {
@@ -228,46 +227,63 @@ const EpisodeDisplay = () => {
             {playerRef.current ? (
               convertTime(playerRef.current.getDuration())
             ) : (
-              <CircleLoader color="#57b98c" className="ml-2"/>
+              <CircleLoader size={40} color="#1ed760" className="ml-2" />
             )}
           </label>
         </div>
         {/* volume & playback rate */}
         <div className="flex gap-2 w-1/5 justify-evenly items-center">
           <VolumeControl volume={volume} setVolume={setVolume} />
-          <Select
-            defaultValue="x1"
-            style={{
-              width: 80,
-            }}
-            onChange={(rate) => setPlaybackRate(rate)}
-            options={[
-              {
-                value: 0.5,
-                label: "x0.5",
+          <ConfigProvider
+            theme={{
+              token: {
+                colorText: "#ffffff",
+                colorBgContainer: "#121826",
+                colorBgElevated: "#121826",
+                colorTextQuaternary:"#fff"
               },
-              {
-                value: 1,
-                label: "x1",
-              },
-              {
-                value: 1.25,
-                label: "x1.25",
-              },
-              {
-                value: 1.5,
-                label: "x1.5",
-              },
-              {
-                value: 1.75,
-                label: "x1.75",
-              },
-              {
-                value: 2,
-                label: "x2",
-              },
-            ]}
-          />
+              components: {
+                Select: {
+                  selectorBg: "#121826",
+                  optionActiveBg:"#2c3958",
+                  optionSelectedBg:"#2c3958",
+              }
+            }
+          }}>
+            <Select
+              defaultValue="x1"
+              style={{
+                width: 80,
+              }}
+              onChange={(rate) => setPlaybackRate(rate)}
+              options={[
+                {
+                  value: 0.5,
+                  label: "x0.5",
+                },
+                {
+                  value: 1,
+                  label: "x1",
+                },
+                {
+                  value: 1.25,
+                  label: "x1.25",
+                },
+                {
+                  value: 1.5,
+                  label: "x1.5",
+                },
+                {
+                  value: 1.75,
+                  label: "x1.75",
+                },
+                {
+                  value: 2,
+                  label: "x2",
+                },
+              ]}
+            />
+          </ConfigProvider>
         </div>
       </div>
     </div>
