@@ -23,7 +23,7 @@ const VolumeControl = (props) => {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className=" max-sm:hidden relative flex items-center">
       {/* Volume Icon */}
       <div
         className={`cursor-pointer ${
