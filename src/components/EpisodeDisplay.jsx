@@ -1,13 +1,15 @@
 "use client";
-import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
+import { FaPlay, FaPause, FaCalendar, FaVolumeUp } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
-import { Select, Form, Slider } from "antd";
+import { Select } from "antd";
 import Loader from "./Loader";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import VolumeControl from "./VolumeControl";
+
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = () => {
   const playerRef = useRef(null);
@@ -182,18 +184,18 @@ const EpisodeDisplay = () => {
         </div>
         {/* progress bar */}
         <div className="flex-1 flex items-center gap-4">
-          <label className="w-[70px]" htmlFor="progress-bar">
+          <label className="sm:w-[70px] max-sm:text-xs " htmlFor="progress-bar">
             {convertTime(timePlayed)}
           </label>
           <div
             onMouseDown={(e) => handleMouseDown(e)}
             onMouseMove={(e) => handleMouseMove(e)}
             onMouseUp={(e) => handleMouseUp(e)}
-            className="h-3 cursor-pointer overflow-hidden flex items-center"
+            className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
           >
             <div
               id="progress-bar"
-              className="w-full bg-white relative rounded-xl overflow-visible"
+              className="h-1 w-full max-sm:min-w-52 bg-white relative rounded-xl overflow-visible"
             >
               {/* playing fraction */}
               <div
@@ -210,7 +212,7 @@ const EpisodeDisplay = () => {
                 style={{
                   left: `${percentagePlayed}%`,
                 }}
-                className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1  bottom-0 absolute"
+                className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
               ></div>
               {/* downloaded fraction */}
               {/* <div
@@ -222,7 +224,7 @@ const EpisodeDisplay = () => {
                 ></div> */}
             </div>
           </div>
-          <label className="w-[70px]" htmlFor="progress-bar">
+          <label className="sm:w-[70px] max-sm:text-xs" htmlFor="progress-bar">
             {playerRef.current ? (
               convertTime(playerRef.current.getDuration())
             ) : (
@@ -231,14 +233,8 @@ const EpisodeDisplay = () => {
           </label>
         </div>
         {/* volume & playback rate */}
-        <div className="flex w-1/5 justify-evenly items-center">
-          <Form.Item noStyle>
-            <Slider
-              className="w-32"
-              onChange={(value) => setVolume(value)}
-              value={volume}
-            />
-          </Form.Item>
+        <div className="flex gap-2 w-1/5 justify-evenly items-center">
+          <VolumeControl volume={volume} setVolume={setVolume} />
           <Select
             defaultValue="x1"
             style={{

@@ -21,14 +21,14 @@ body {
   /* font-family: Arial, Helvetica, sans-serif; */
 }
 
-#progress-bar {
+/* #progress-bar {
   height: 0.25rem;
   width: 800px;
   max-width: 800px;
-  min-width: 200px; /* Set a minimum width */
-}
+  min-width: 200px;
+} */
 
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
   #progress-bar {
     width: 33.33%;
   }
@@ -44,4 +44,4 @@ body {
   #progress-bar {
     width: 75%;
   }
-}
+} */
