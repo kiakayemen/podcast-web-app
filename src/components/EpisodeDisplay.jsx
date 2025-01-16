@@ -7,12 +7,18 @@ import { useState, useRef, useEffect } from "react";
 import { Select, ConfigProvider } from "antd";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useSelector, useDispatch } from "react-redux";
 import VolumeControl from "./VolumeControl";
+import { togglePlay } from "@/features/slices/playerSlice";
+// import Timeline from "./Timeline";
+// import Carousel from "./Carousel";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = () => {
   const playerRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const dispatch = useDispatch();
+  // const [isPlaying, setIsPlaying] = useState(false);
+  const isPlaying = useSelector((state)=>state.player.isPlaying)
   const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
   const [timePlayed, setTimePlayed] = useState(0);
@@ -66,227 +72,236 @@ const EpisodeDisplay = () => {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-screen-lg mx-auto">
-      <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start">
-        <Image
-          width={180}
-          className="rounded-xl"
-          alt="Episode Cover"
-          height={180}
-          src={
-            "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg"
-          }
-        ></Image>
+    <>
+      <div className="flex flex-col w-full max-w-screen-lg mx-auto">
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start">
+          <Image
+            width={180}
+            className="rounded-xl"
+            alt="Episode Cover"
+            height={180}
+            src={
+              "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg"
+            }
+          ></Image>
 
-        <div className="flex flex-col gap-4">
-          <h2 className="text-2xl text-center sm:text-left font-bold">
-            Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            <p className="flex items-center gap-1 text-lg">
-              {/* duration */}
-              <FaClock size={12} />
-              2:07:23
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl text-center sm:text-left font-bold">
+              Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <p className="flex items-center gap-1 text-lg">
+                {/* duration */}
+                <FaClock size={12} />
+                2:07:23
+              </p>
+              <p className="flex items-center gap-1 text-lg">
+                {/* date */}
+                <FaCalendar size={12} />
+                2024-11-15
+              </p>
+              <p className="flex items-center gap-1 text-lg">
+                {/* creators */}
+                <FaUserLarge size={12} />
+                Parham Kazemi, Ahmad Nabipoor
+              </p>
+            </div>
+            {/* summary */}
+            <p className="text-lg text-right" dir="rtl">
+              در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
+              چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت
+              در حال تحول بخش لجستیک ایران صحبت کردیم.
             </p>
-            <p className="flex items-center gap-1 text-lg">
-              {/* date */}
-              <FaCalendar size={12} />
-              2024-11-15
-            </p>
-            <p className="flex items-center gap-1 text-lg">
-              {/* creators */}
-              <FaUserLarge size={12} />
-              Parham Kazemi, Ahmad Nabipoor
-            </p>
+            <div className="flex items-start">
+              <button
+                className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background gap-3 rounded py-2 px-4 bg-accentColor"
+                onClick={() => dispatch(togglePlay())}
+              >
+                {isPlaying ? <FaPause /> : <FaPlay />}
+                {isPlaying ? "Pause Episode" : "Play Episode"}
+              </button>
+            </div>
           </div>
-          {/* summary */}
-          <p className="text-lg text-right" dir="rtl">
-            در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
-            چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت در
-            حال تحول بخش لجستیک ایران صحبت کردیم.
-          </p>
-          <div className="flex items-start">
-            <button
-              className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background gap-3 rounded py-2 px-4 bg-accentColor"
+        </div>
+        <ReactPlayer
+          fallback={<CircleLoader color="#1ed760" />}
+          ref={playerRef}
+          onProgress={(data) => {
+            if (!isDragging) {
+              setLoaded(data.loaded);
+              setTimePlayed(data.playedSeconds);
+              setPercentagePlayed(data.played * 100);
+            }
+          }}
+          className="my-6"
+          volume={volume / 100}
+          progressInterval={100}
+          controls={false}
+          playbackRate={playbackRate}
+          width="100%"
+          height="50px"
+          playing={isPlaying}
+          url="https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3"
+        />
+        {/* controls, progress bar & playback rate Container */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
+          {/* controls */}
+          <div className="flex gap-4">
+            <RiReplay15Fill
+              size={40}
+              className="cursor-pointer text-accentColor rounded-full p-1"
               onClick={() => {
-                setIsPlaying(!isPlaying);
+                const newTime = Math.max(0, timePlayed - 15);
+                setTimePlayed(newTime);
+                playerRef.current.seekTo(
+                  newTime / playerRef.current.getDuration()
+                );
               }}
-            >
-              {isPlaying ? <FaPause /> : <FaPlay />}
-              {isPlaying ? "Pause Episode" : "Play Episode"}
-            </button>
+            />
+            {isPlaying ? (
+              <FaPause
+                className="cursor-pointer text-accentColor rounded p-1"
+                onClick={() => dispatch(togglePlay())}
+                size={45}
+              />
+            ) : (
+              <FaPlay
+                className="cursor-pointer text-accentColor rounded p-1"
+                onClick={() => dispatch(togglePlay())}
+                size={45}
+              />
+            )}
+            <RiForward15Fill
+              size={40}
+              className="cursor-pointer text-accentColor rounded-full p-1"
+              onClick={() => {
+                const newTime = Math.min(
+                  playerRef.current.getDuration(),
+                  timePlayed + 15
+                );
+                setTimePlayed(newTime);
+                playerRef.current.seekTo(
+                  newTime / playerRef.current.getDuration()
+                );
+              }}
+            />
           </div>
-        </div>
-      </div>
-      <ReactPlayer
-        fallback={<CircleLoader color="#1ed760"/>}
-        ref={playerRef}
-        onProgress={(data) => {
-          if (!isDragging) {
-            setLoaded(data.loaded);
-            setTimePlayed(data.playedSeconds);
-            setPercentagePlayed(data.played * 100);
-          }
-        }}
-        className="my-6"
-        volume={volume / 100}
-        progressInterval={100}
-        controls={false}
-        playbackRate={playbackRate}
-        width="100%"
-        height="50px"
-        playing={isPlaying}
-        url="https://stitcher2.acast.com/livestitches/8970a8fd61620ca9925c21943a0fc0a4.mp3?aid=6736c112ba4404855a63e8c5&chid=625bd31dc030a00012e0dba7&ci=kensc6nOo1TwFHW5-_GHfq98Q8ZOXgyHIqYsyLBofXZBYmzNDKxIPA%3D%3D&pf=rss&range=bytes%3D0-&sv=sphinx%401.227.0&uid=a345ffcf1c438ca26da224e960d25ee3&Expires=1735595001186&Key-Pair-Id=K38CTQXUSD0VVB&Signature=ClphBgg92xYCuL6p37qM9Z7cSKYDauzKPnfijAzN8JJCJs65Dlrh6S6Irt6WpZEEn5mcwHdsu3WccxRkvAvxAZSvT7IwrmYSuqgfE7O13k-38MmT4XefV0RgnCGUtz8mV41o-D0rC4r9wUiRBbfugTa-Fe~r4R9MzDA2QsPsPgizbITAR7nweFay5fKsX3yVdDP2uM52UdNqBKEmSOWhJAhX2XThZdQwGEy5z8puao0fieKtkl9VL8LFTEtL9zztJcvkOcKXSGlrleR5b7wuk2RWFxNFotGnrCe8f0acDEkgOLpOGzZLzjRJMpiU4bOwepXVtsWmlSfV4~SLaqB6OA__"
-      />
-      {/* controls, progress bar & playback rate Container */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
-        {/* controls */}
-        <div className="flex gap-4">
-          <RiReplay15Fill
-            size={40}
-            className="cursor-pointer text-accentColor rounded-full p-1"
-            onClick={() => {
-              const newTime = Math.max(0, timePlayed - 15);
-              setTimePlayed(newTime);
-              playerRef.current.seekTo(
-                newTime / playerRef.current.getDuration()
-              );
-            }}
-          />
-          {isPlaying ? (
-            <FaPause
-              className="cursor-pointer text-accentColor rounded p-1"
-              onClick={() => setIsPlaying(!isPlaying)}
-              size={45}
-            />
-          ) : (
-            <FaPlay
-              className="cursor-pointer text-accentColor rounded p-1"
-              onClick={() => setIsPlaying(!isPlaying)}
-              size={45}
-            />
-          )}
-          <RiForward15Fill
-            size={40}
-            className="cursor-pointer text-accentColor rounded-full p-1"
-            onClick={() => {
-              const newTime = Math.min(
-                playerRef.current.getDuration(),
-                timePlayed + 15
-              );
-              setTimePlayed(newTime);
-              playerRef.current.seekTo(
-                newTime / playerRef.current.getDuration()
-              );
-            }}
-          />
-        </div>
-        {/* progress bar */}
-        <div className="flex-1 flex items-center gap-4">
-          <label className="sm:w-[70px] max-sm:text-xs " htmlFor="progress-bar">
-            {convertTime(timePlayed)}
-          </label>
-          <div
-            onMouseDown={(e) => handleMouseDown(e)}
-            onMouseMove={(e) => handleMouseMove(e)}
-            onMouseUp={(e) => handleMouseUp(e)}
-            className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
-          >
-            <div
-              id="progress-bar"
-              className="h-1 w-full max-sm:min-w-52 bg-white relative rounded-xl overflow-visible"
+          {/* progress bar */}
+          <div className="flex-1 flex items-center gap-4">
+            <label
+              className="sm:w-[70px] max-sm:text-xs "
+              htmlFor="progress-bar"
             >
-              {/* playing fraction */}
+              {convertTime(timePlayed)}
+            </label>
+            <div
+              onMouseDown={(e) => handleMouseDown(e)}
+              onMouseMove={(e) => handleMouseMove(e)}
+              onMouseUp={(e) => handleMouseUp(e)}
+              className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
+            >
               <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
-                  transition: "transform",
-                }}
-                className={`bg-accentColor rounded-s-xl`}
-              ></div>
-              {/* bullet at the end as an indicator */}
-              <div
-                style={{
-                  left: `${percentagePlayed}%`,
-                }}
-                className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
-              ></div>
-              {/* downloaded fraction */}
-              {/* <div
+                id="progress-bar"
+                className="h-1 w-full max-sm:min-w-52 bg-white relative rounded-xl overflow-visible"
+              >
+                {/* playing fraction */}
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
+                    transition: "transform",
+                  }}
+                  className={`bg-accentColor rounded-s-xl`}
+                ></div>
+                {/* bullet at the end as an indicator */}
+                <div
+                  style={{
+                    left: `${percentagePlayed}%`,
+                  }}
+                  className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
+                ></div>
+                {/* downloaded fraction */}
+                {/* <div
               style={{
                 width: `${loaded * 100}%`,
                 transition: "width 0.1s ease-in",
                 }}
                 className={`bg-gray-300 top-0 left-0 bottom-0 absolute rounded-s-xl`}
                 ></div> */}
+              </div>
             </div>
+            <label
+              className="sm:w-[70px] max-sm:text-xs"
+              htmlFor="progress-bar"
+            >
+              {playerRef.current ? (
+                convertTime(playerRef.current.getDuration())
+              ) : (
+                <CircleLoader size={40} color="#1ed760" className="ml-2" />
+              )}
+            </label>
           </div>
-          <label className="sm:w-[70px] max-sm:text-xs" htmlFor="progress-bar">
-            {playerRef.current ? (
-              convertTime(playerRef.current.getDuration())
-            ) : (
-              <CircleLoader size={40} color="#1ed760" className="ml-2" />
-            )}
-          </label>
-        </div>
-        {/* volume & playback rate */}
-        <div className="flex gap-2 w-1/5 justify-evenly items-center">
-          <VolumeControl volume={volume} setVolume={setVolume} />
-          <ConfigProvider
-            theme={{
-              token: {
-                colorText: "#ffffff",
-                colorBgContainer: "#121826",
-                colorBgElevated: "#121826",
-                colorTextQuaternary:"#fff"
-              },
-              components: {
-                Select: {
-                  selectorBg: "#121826",
-                  optionActiveBg:"#2c3958",
-                  optionSelectedBg:"#2c3958",
-              }
-            }
-          }}>
-            <Select
-              defaultValue="x1"
-              style={{
-                width: 80,
+          {/* volume & playback rate */}
+          <div className="flex gap-2 w-1/5 justify-evenly items-center">
+            <VolumeControl volume={volume} setVolume={setVolume} />
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorText: "#ffffff",
+                  colorBgContainer: "#121826",
+                  colorBgElevated: "#121826",
+                  colorTextQuaternary: "#fff",
+                },
+                components: {
+                  Select: {
+                    selectorBg: "#121826",
+                    optionActiveBg: "#2c3958",
+                    optionSelectedBg: "#2c3958",
+                  },
+                },
               }}
-              onChange={(rate) => setPlaybackRate(rate)}
-              options={[
-                {
-                  value: 0.5,
-                  label: "x0.5",
-                },
-                {
-                  value: 1,
-                  label: "x1",
-                },
-                {
-                  value: 1.25,
-                  label: "x1.25",
-                },
-                {
-                  value: 1.5,
-                  label: "x1.5",
-                },
-                {
-                  value: 1.75,
-                  label: "x1.75",
-                },
-                {
-                  value: 2,
-                  label: "x2",
-                },
-              ]}
-            />
-          </ConfigProvider>
+            >
+              <Select
+                defaultValue="x1"
+                style={{
+                  width: 80,
+                }}
+                onChange={(rate) => setPlaybackRate(rate)}
+                options={[
+                  {
+                    value: 0.5,
+                    label: "x0.5",
+                  },
+                  {
+                    value: 1,
+                    label: "x1",
+                  },
+                  {
+                    value: 1.25,
+                    label: "x1.25",
+                  },
+                  {
+                    value: 1.5,
+                    label: "x1.5",
+                  },
+                  {
+                    value: 1.75,
+                    label: "x1.75",
+                  },
+                  {
+                    value: 2,
+                    label: "x2",
+                  },
+                ]}
+              />
+            </ConfigProvider>
+          </div>
         </div>
       </div>
-    </div>
+      {/* <Carousel items={items} activeItem={activeItem} setActiveItem={setActiveItem}/>
+      <Timeline content={items[activeItem].content}/> */}
+    </>
   );
 };
 
