@@ -9,19 +9,19 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
 import VolumeControl from "./VolumeControl";
-import { togglePlay } from "@/features/slices/playerSlice";
-// import Timeline from "./Timeline";
-// import Carousel from "./Carousel";
+import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
+import Carousel from "./Carousel";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = () => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
   // const [isPlaying, setIsPlaying] = useState(false);
-  const isPlaying = useSelector((state)=>state.player.isPlaying)
+  const isPlaying = useSelector((state) => state.player.isPlaying);
+  const timePlayed = useSelector((state) => state.player.timePlayed);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
-  const [timePlayed, setTimePlayed] = useState(0);
+  const [localTimePlayed, setLocalTimePlayed] = useState(0);
   const [percentagePlayed, setPercentagePlayed] = useState(0);
   const [volume, setVolume] = useState(100);
   const [isDragging, setIsDragging] = useState(false);
@@ -57,7 +57,8 @@ const EpisodeDisplay = () => {
     const clampedProgressFraction = Math.min(1, Math.max(0, progressFraction));
     const duration = playerRef.current?.getDuration();
     setPercentagePlayed(clampedProgressFraction * 100);
-    setTimePlayed(clampedProgressFraction * duration);
+    setLocalTimePlayed(clampedProgressFraction * duration);
+    dispatch(setTimePlayed(localTimePlayed));
   };
 
   const handleMouseUp = (e) => {
@@ -70,6 +71,17 @@ const EpisodeDisplay = () => {
     setIsDragging(false);
     playerRef.current?.seekTo(clampedProgressFraction);
   };
+
+  useEffect(() => {
+    if (playerRef.current && timePlayed !== null) {
+      playerRef.current.seekTo(timePlayed, "seconds");
+    }
+  }, [timePlayed]);
+
+  // Sync `timePlayed` in Redux with `localTimePlayed`
+  useEffect(() => {
+    setLocalTimePlayed(timePlayed);
+  }, [timePlayed]);
 
   return (
     <>
@@ -129,7 +141,7 @@ const EpisodeDisplay = () => {
           onProgress={(data) => {
             if (!isDragging) {
               setLoaded(data.loaded);
-              setTimePlayed(data.playedSeconds);
+              setLocalTimePlayed(data.playedSeconds);
               setPercentagePlayed(data.played * 100);
             }
           }}
@@ -141,7 +153,8 @@ const EpisodeDisplay = () => {
           width="100%"
           height="50px"
           playing={isPlaying}
-          url="https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3"
+          // url="https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3"
+          url="/media/audio-file.mp3"
         />
         {/* controls, progress bar & playback rate Container */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
@@ -151,8 +164,9 @@ const EpisodeDisplay = () => {
               size={40}
               className="cursor-pointer text-accentColor rounded-full p-1"
               onClick={() => {
-                const newTime = Math.max(0, timePlayed - 15);
-                setTimePlayed(newTime);
+                const newTime = Math.max(0, localTimePlayed - 15);
+                setLocalTimePlayed(newTime);
+                dispatch(setTimePlayed(newTime));
                 playerRef.current.seekTo(
                   newTime / playerRef.current.getDuration()
                 );
@@ -177,9 +191,10 @@ const EpisodeDisplay = () => {
               onClick={() => {
                 const newTime = Math.min(
                   playerRef.current.getDuration(),
-                  timePlayed + 15
+                  localTimePlayed + 15
                 );
-                setTimePlayed(newTime);
+                setLocalTimePlayed(newTime);
+                dispatch(setTimePlayed(newTime));
                 playerRef.current.seekTo(
                   newTime / playerRef.current.getDuration()
                 );
@@ -192,7 +207,7 @@ const EpisodeDisplay = () => {
               className="sm:w-[70px] max-sm:text-xs "
               htmlFor="progress-bar"
             >
-              {convertTime(timePlayed)}
+              {convertTime(localTimePlayed)}
             </label>
             <div
               onMouseDown={(e) => handleMouseDown(e)}
@@ -299,8 +314,7 @@ const EpisodeDisplay = () => {
           </div>
         </div>
       </div>
-      {/* <Carousel items={items} activeItem={activeItem} setActiveItem={setActiveItem}/>
-      <Timeline content={items[activeItem].content}/> */}
+      <Carousel />
     </>
   );
 };
