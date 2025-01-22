@@ -11,12 +11,13 @@ import { useSelector, useDispatch } from "react-redux";
 import VolumeControl from "./VolumeControl";
 import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
 import Carousel from "./Carousel";
+import data from "@/data/data.json";
+import useConvertTime from "@/lib/hooks/useConvertTime";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = () => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
-  // const [isPlaying, setIsPlaying] = useState(false);
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const timePlayed = useSelector((state) => state.player.timePlayed);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -25,24 +26,7 @@ const EpisodeDisplay = () => {
   const [percentagePlayed, setPercentagePlayed] = useState(0);
   const [volume, setVolume] = useState(100);
   const [isDragging, setIsDragging] = useState(false);
-
-  const convertTime = (num) => {
-    let hours = Math.floor(num / 3600);
-    let minutes = Math.floor((num % 3600) / 60);
-    let seconds = Math.floor(num % 60);
-
-    if (hours < 10) {
-      hours = "0" + hours;
-    }
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    if (seconds < 10) {
-      seconds = "0" + seconds;
-    }
-    const convertedTime = hours + ":" + minutes + ":" + seconds;
-    return convertedTime;
-  };
+  const convertTime = useConvertTime();
 
   const handleMouseDown = () => setIsDragging(true);
 
@@ -78,7 +62,7 @@ const EpisodeDisplay = () => {
     }
   }, [timePlayed]);
 
-  // Sync `timePlayed` in Redux with `localTimePlayed`
+  // Sync `localTimePlayed` with `timePlayed` in Redux
   useEffect(() => {
     setLocalTimePlayed(timePlayed);
   }, [timePlayed]);
@@ -92,37 +76,33 @@ const EpisodeDisplay = () => {
             className="rounded-xl"
             alt="Episode Cover"
             height={180}
-            src={
-              "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg"
-            }
+            src={data.episodes[0].thumbnailSrc}
           ></Image>
 
           <div className="flex flex-col gap-4">
             <h2 className="text-2xl text-center sm:text-left font-bold">
-              Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا
+              {data.episodes[0].title}
             </h2>
             <div className="flex flex-wrap gap-3">
               <p className="flex items-center gap-1 text-lg">
                 {/* duration */}
                 <FaClock size={12} />
-                2:07:23
+                {convertTime(data.episodes[0].duration)}
               </p>
               <p className="flex items-center gap-1 text-lg">
                 {/* date */}
                 <FaCalendar size={12} />
-                2024-11-15
+                {data.episodes[0].date}
               </p>
-              <p className="flex items-center gap-1 text-lg">
+              <p className="flex items-center gap-1 text-lg capitalize">
                 {/* creators */}
                 <FaUserLarge size={12} />
-                Parham Kazemi, Ahmad Nabipoor
+                {data.episodes[0].speakers}
               </p>
             </div>
             {/* summary */}
             <p className="text-lg text-right" dir="rtl">
-              در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا،
-              چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت
-              در حال تحول بخش لجستیک ایران صحبت کردیم.
+              {data.episodes[0].summary}{" "}
             </p>
             <div className="flex items-start">
               <button

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, use } from "react";
+import { useState, useRef } from "react";
 import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 
 const VolumeControl = (props) => {

@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTimePlayed } from "@/features/slices/playerSlice";
+import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
+import useConvertTime from "@/lib/hooks/useConvertTime";
+import data from "@/data/data.json"
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -10,27 +12,9 @@ import { TabContext, TabPanel, TabList } from "@mui/lab";
 const Carousel = () => {
   const [activeItem, setActiveItem] = useState(0);
   const dispatch = useDispatch();
-
-  const items = useSelector((state) => state.episodeFractions.items);
-
-  const convertTime = (num) => {
-    let hours = Math.floor(num / 3600);
-    let minutes = Math.floor((num % 3600) / 60);
-    let seconds = Math.floor(num % 60);
-
-    if (hours < 10) {
-      hours = "0" + hours;
-    }
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    if (seconds < 10) {
-      seconds = "0" + seconds;
-    }
-    const convertedTime = hours + ":" + minutes + ":" + seconds;
-    return convertedTime;
-  };
-
+  const isPlaying = useSelector((state) => state.player.isPlaying);
+  const items = data.episodeFractions;
+  const convertTime = useConvertTime();
   const [value, setValue] = useState("1");
 
   const handleChange = (event, newValue) => {
@@ -54,6 +38,7 @@ const Carousel = () => {
               onClick={() => {
                 setActiveItem(item.id);
                 dispatch(setTimePlayed(item.time));
+                isPlaying === false && dispatch(togglePlay());
               }}
             >
               <p className="absolute text-[10px] right-1 top-1">

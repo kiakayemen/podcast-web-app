@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'assets.pippa.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
+      },
     ],
   },
 };
