@@ -9,11 +9,12 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 
-const Carousel = () => {
+const Carousel = ({id}) => {
   const [activeItem, setActiveItem] = useState(0);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
-  const items = data.episodeFractions;
+  const items = data.episodes[0].episodeFractions;
+  console.log(id);
   const convertTime = useConvertTime();
   const [value, setValue] = useState("1");
 

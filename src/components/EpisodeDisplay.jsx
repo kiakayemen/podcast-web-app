@@ -132,8 +132,8 @@ const EpisodeDisplay = ({id}) => {
           width="100%"
           height="50px"
           playing={isPlaying}
-          // url={data.episodes[id].audioSrc}
-          url="/media/audio-file.mp3"
+          url={data.episodes[id].audioSrc}
+          // url="/media/audio-file.mp3"
         />
         {/* controls, progress bar & playback rate Container */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
@@ -285,7 +285,7 @@ const EpisodeDisplay = ({id}) => {
           </div>
         </div>
       </div>
-      <Carousel />
+      <Carousel id={id} />
     </>
   );
 };

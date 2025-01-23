@@ -10,7 +10,109 @@
             "summary": "در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا، چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت در حال تحول بخش لجستیک ایران صحبت کردیم.",
             "thumbnailSrc": "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg",
             "audioSrc": "https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3",
-            "url":"/podcasts/tabaghe16"
+            "url":"/podcasts/tabaghe16",
+            "episodeFractions": [
+                {
+                    "id": 0,
+                    "title": "اینترو",
+                    "content": "Content for اینترو",
+                    "time": 0
+                },
+                {
+                    "id": 1,
+                    "title": "لیموهاست",
+                    "content": "Content for لیموهاست",
+                    "time": 90
+                },
+                {
+                    "id": 2,
+                    "title": "معرفی گنجه",
+                    "content": "Content for معرفی گنجه",
+                    "time": 158
+                },
+                {
+                    "id": 3,
+                    "title": "معرفی بچه ها",
+                    "content": "Content for معرفی بچه ها",
+                    "time": 1160
+                },
+                {
+                    "id": 4,
+                    "title": "چهارتا هم بنیانگذار!",
+                    "content": "Content for چهارتا هم بنیانگذار!", "time": 1600
+                },
+                {
+                    "id": 5,
+                    "title": "از دانشجو تا بنیان گذار",
+                    "content": "Content for از دانشجو تا بنیان گذار", "time": 2276
+                },
+                {
+                    "id": 6,
+                    "title": "درباره لاجستیک",
+                    "content": "Content for درباره لاجستیک",
+                    "time": 3000
+                },
+                {
+                    "id": 7,
+                    "title": "ادامه داستان",
+                    "content": "Content for ادامه داستان",
+                    "time": 3340
+                },
+                {
+                    "id": 8,
+                    "title": "گنجه دقیقا چیکار می کنه؟",
+                    "content": "Content for گنجه دقیقا چیکار می‌کنه؟", "time": 4659
+                },
+                {
+                    "id": 9,
+                    "title": "ادامه داستان",
+                    "content": "Content for ادامه داستان",
+                    "time": 5445
+                },
+                {
+                    "id": 10,
+                    "title": "بیزنس و سیاست",
+                    "content": "Content for بیزنس و سیاست",
+                    "time": 6313
+                },
+                {
+                    "id": 11,
+                    "title": "اجاره میدین یا اجاره میگیرین؟",
+                    "content": "Content for اجاره میدین یا اجاره میگیرین؟",
+                    "time": 6710
+                },
+                {
+                    "id": 12,
+                    "title": "دور دوم جذب سرمایه",
+                    "content": "Content for دور دوم جذب سرمایه",
+                    "time": 6951
+                },
+                {
+                    "id": 13,
+                    "title": "حال و آینده گنجه",
+                    "content": "Content for حال و آینده گنجه",
+                    "time": 7065
+                },
+                {
+                    "id": 14,
+                    "title": "ایران میمونید؟",
+                    "content": "Content for ایران میمونید؟",
+                    "time": 7420
+                }
+            ]
+            
+        },
+        {
+            "id": 1,
+            "title":"داستان زندگی خاندان کیم در کره شمالی",
+            "creator": "Rokh Podcast",
+            "duration":3437,
+            "date": "2022-08-27",
+            "speakers": "Amir Soodbakhsh",
+            "summary": "در این ایپزود قصد داریم سری به یکی دیگر از چهره‌های شاخص و تاثیرگذار تاریخ بزنیم.",
+            "thumbnailSrc": "https://rokhpodcast.ir/wp-content/uploads/2023/05/خاندان-کیم-1536x1536.webp",
+            "audioSrc": "https://sphinx.acast.com/p/open/s/65e095ffbec0f30016047f7e/e/rokhpodcast.podbean.com%2Fe781cda4-a154-374a-bb7a-acd5192cefb5/media.mp3",
+            "url":"/podcasts/rokh"
         }
     ],
     "podcasts":[
@@ -21,96 +123,15 @@
         "description": "در این پادکست، با بنیان‌گذاران و کارآفرینان ایرانی صحبت می‌کنیم و داستان‌های آن‌ها را برای شما روایت می‌کنیم.",
         "thumbnailSrc":"https://i.scdn.co/image/ab6765630000ba8a2204d2f7fe7ff2ebf62f5d29",
         "url":"/podcasts/tabaghe16"
-        }
-    ],
-    "episodeFractions": [
-    {
-        "id": 0,
-        "title": "اینترو",
-        "content": "Content for اینترو",
-        "time": 0
-    },
-    {
+        },
+        {
         "id": 1,
-        "title": "لیموهاست",
-        "content": "Content for لیموهاست",
-        "time": 90
-    },
-    {
-        "id": 2,
-        "title": "معرفی گنجه",
-        "content": "Content for معرفی گنجه",
-        "time": 158
-    },
-    {
-        "id": 3,
-        "title": "معرفی بچه ها",
-        "content": "Content for معرفی بچه ها",
-        "time": 1160
-    },
-    {
-        "id": 4,
-        "title": "چهارتا هم بنیانگذار!",
-        "content": "Content for چهارتا هم بنیانگذار!", "time": 1600
-    },
-    {
-        "id": 5,
-        "title": "از دانشجو تا بنیان گذار",
-        "content": "Content for از دانشجو تا بنیان گذار", "time": 2276
-    },
-    {
-        "id": 6,
-        "title": "درباره لاجستیک",
-        "content": "Content for درباره لاجستیک",
-        "time": 3000
-    },
-    {
-        "id": 7,
-        "title": "ادامه داستان",
-        "content": "Content for ادامه داستان",
-        "time": 3340
-    },
-    {
-        "id": 8,
-        "title": "گنجه دقیقا چیکار می کنه؟",
-        "content": "Content for گنجه دقیقا چیکار می‌کنه؟", "time": 4659
-    },
-    {
-        "id": 9,
-        "title": "ادامه داستان",
-        "content": "Content for ادامه داستان",
-        "time": 5445
-    },
-    {
-        "id": 10,
-        "title": "بیزنس و سیاست",
-        "content": "Content for بیزنس و سیاست",
-        "time": 6313
-    },
-    {
-        "id": 11,
-        "title": "اجاره میدین یا اجاره میگیرین؟",
-        "content": "Content for اجاره میدین یا اجاره میگیرین؟",
-        "time": 6710
-    },
-    {
-        "id": 12,
-        "title": "دور دوم جذب سرمایه",
-        "content": "Content for دور دوم جذب سرمایه",
-        "time": 6951
-    },
-    {
-        "id": 13,
-        "title": "حال و آینده گنجه",
-        "content": "Content for حال و آینده گنجه",
-        "time": 7065
-    },
-    {
-        "id": 14,
-        "title": "ایران میمونید؟",
-        "content": "Content for ایران میمونید؟",
-        "time": 7420
-    }
-]
+        "title": "Rokh Podcast",
+        "creator": "Amir Soodbakhsh",
+        "description": "هر زندگی زیسته پر از راز و رمزها و فراز و نشیب‌هایی است که گاها از دل آن‌ها انسان‌هایی برجسته و تاریخ‌ساز زاده می‌شوند برای تغییر و تاثیر بر زندگی بشریت. پادکست رخ داستان زندگی این انسان‌هاست.",
+        "thumbnailSrc":"https://rokhpodcast.ir/wp-content/uploads/2023/05/logo-website-300x115.png",
+        "url":"/podcasts/rokh"
+        }
+    ]
 
 }
