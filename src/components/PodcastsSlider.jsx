@@ -3,7 +3,6 @@ import AspectRatio from "@mui/joy/AspectRatio";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import CardOverflow from "@mui/joy/CardOverflow";
-import Divider from "@mui/joy/Divider";
 import Typography from "@mui/joy/Typography";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,8 +22,8 @@ export default function PodcastsSlider() {
               <CardOverflow>
                 <AspectRatio ratio="1">
                   <Image
-                    width={318}
-                    height={318}
+                    width={150}
+                    height={150}
                     src={episode.thumbnailSrc}
                     loading="lazy"
                     alt=""

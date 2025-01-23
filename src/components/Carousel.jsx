@@ -1,20 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
 import useConvertTime from "@/lib/hooks/useConvertTime";
-import data from "@/data/data.json"
+import data from "@/data/data.json";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 
-const Carousel = ({id}) => {
+const Carousel = ({ id }) => {
   const [activeItem, setActiveItem] = useState(0);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
+  const timePlayed = useSelector((state) => state.player.timePlayed);
   const items = data.episodes[0].episodeFractions;
-  console.log(id);
+  // console.log(id);
   const convertTime = useConvertTime();
   const [value, setValue] = useState("1");
 
@@ -22,7 +23,24 @@ const Carousel = ({id}) => {
     setValue(newValue);
   };
 
+  const compareTime = useCallback(() => {
+    const newActiveItem = items.reduce((acc, item) => {
+      if (timePlayed >= item.time) {
+        return item.id;
+      }
+      return acc;
+    }, activeItem);
 
+    if (newActiveItem !== activeItem) {
+      setActiveItem(newActiveItem);
+    }
+  }, [timePlayed, items, activeItem]);
+
+  useEffect(() => {
+    compareTime();
+  }, [compareTime]);
+
+  
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Carousel Container */}
