@@ -1,4 +1,5 @@
 import data from '@/data/data.json'
+import EpisodeDisplay from '@/components/EpisodeDisplay';
 
 const tabaghe16Episode = ({params}) => {
     const episode = data.episodes.find(
@@ -10,7 +11,7 @@ const tabaghe16Episode = ({params}) => {
 
     return (
         <div>
-            {episode.title}
+            <EpisodeDisplay id={episode.id} />
         </div>
   )
 }

@@ -1,9 +1,9 @@
-import EpisodeDisplay from "@/components/EpisodeDisplay"
+import EpisodesSlider from "@/components/EpisodesSlider"
 
 const tabaghe16Page = () => {
   return (
     <div className="container mx-auto">
-    <EpisodeDisplay />
+    <EpisodesSlider creator={"Tabaghe 16"} />
   </div>
 )
 }

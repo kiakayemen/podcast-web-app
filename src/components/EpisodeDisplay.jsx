@@ -15,7 +15,7 @@ import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
-const EpisodeDisplay = () => {
+const EpisodeDisplay = ({id}) => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
@@ -32,7 +32,6 @@ const EpisodeDisplay = () => {
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-
     const progressBar = e.currentTarget;
     const boundingRect = progressBar.getBoundingClientRect(); // Get the progress bar's dimensions
     const clickX = e.clientX - boundingRect.left; // Mouse X position relative to the progress bar
@@ -76,33 +75,33 @@ const EpisodeDisplay = () => {
             className="rounded-xl"
             alt="Episode Cover"
             height={180}
-            src={data.episodes[0].thumbnailSrc}
+            src={data.episodes[id].thumbnailSrc}
           ></Image>
 
           <div className="flex flex-col gap-4">
             <h2 className="text-2xl text-center sm:text-left font-bold">
-              {data.episodes[0].title}
+              {data.episodes[id].title}
             </h2>
             <div className="flex flex-wrap gap-3">
               <p className="flex items-center gap-1 text-lg">
                 {/* duration */}
                 <FaClock size={12} />
-                {convertTime(data.episodes[0].duration)}
+                {convertTime(data.episodes[id].duration)}
               </p>
               <p className="flex items-center gap-1 text-lg">
                 {/* date */}
                 <FaCalendar size={12} />
-                {data.episodes[0].date}
+                {data.episodes[id].date}
               </p>
               <p className="flex items-center gap-1 text-lg capitalize">
                 {/* creators */}
                 <FaUserLarge size={12} />
-                {data.episodes[0].speakers}
+                {data.episodes[id].speakers}
               </p>
             </div>
             {/* summary */}
             <p className="text-lg text-right" dir="rtl">
-              {data.episodes[0].summary}{" "}
+              {data.episodes[id].summary}{" "}
             </p>
             <div className="flex items-start">
               <button
@@ -133,7 +132,7 @@ const EpisodeDisplay = () => {
           width="100%"
           height="50px"
           playing={isPlaying}
-          // url="https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3"
+          // url={data.episodes[id].audioSrc}
           url="/media/audio-file.mp3"
         />
         {/* controls, progress bar & playback rate Container */}
@@ -207,23 +206,15 @@ const EpisodeDisplay = () => {
                     transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
                     transition: "transform",
                   }}
-                  className={`bg-accentColor rounded-s-xl`}
+                  className={`z-20 bg-accentColor rounded-s-xl`}
                 ></div>
                 {/* bullet at the end as an indicator */}
                 <div
                   style={{
                     left: `${percentagePlayed}%`,
                   }}
-                  className="w-3 h-3 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
+                  className="w-3 h-3 z-20 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
                 ></div>
-                {/* downloaded fraction */}
-                {/* <div
-              style={{
-                width: `${loaded * 100}%`,
-                transition: "width 0.1s ease-in",
-                }}
-                className={`bg-gray-300 top-0 left-0 bottom-0 absolute rounded-s-xl`}
-                ></div> */}
               </div>
             </div>
             <label
@@ -238,7 +229,7 @@ const EpisodeDisplay = () => {
             </label>
           </div>
           {/* volume & playback rate */}
-          <div className="flex gap-2 w-1/5 justify-evenly items-center">
+          <div className="flex gap-2 w-1/6 justify-evenly items-center">
             <VolumeControl volume={volume} setVolume={setVolume} />
             <ConfigProvider
               theme={{
