@@ -8,9 +8,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        accentColor: "var(--accent-color)",
+        primary: "#20C997", // Teal
+        neutral: {
+          light: "#F9FAFB", // Light gray for backgrounds
+          DEFAULT: "#6B7280", // Neutral gray
+          dark: "#374151", // Darker gray
+        },
       },
       scale: {
         '200': '2',

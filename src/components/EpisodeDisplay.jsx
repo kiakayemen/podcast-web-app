@@ -15,7 +15,7 @@ import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
-const EpisodeDisplay = ({id}) => {
+const EpisodeDisplay = ({ id }) => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);

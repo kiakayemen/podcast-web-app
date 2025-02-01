@@ -119,6 +119,7 @@
         {
         "id": 0,
         "title": "Tabaghe 16",
+        "slug": "tabaghe-16",
         "creator": "Soheyl Alavi",
         "description": "در این پادکست، با بنیان‌گذاران و کارآفرینان ایرانی صحبت می‌کنیم و داستان‌های آن‌ها را برای شما روایت می‌کنیم.",
         "thumbnailSrc":"https://i.scdn.co/image/ab6765630000ba8a2204d2f7fe7ff2ebf62f5d29",
@@ -127,6 +128,7 @@
         {
         "id": 1,
         "title": "Rokh Podcast",
+        "slug": "rokh-podcast",
         "creator": "Amir Soodbakhsh",
         "description": "هر زندگی زیسته پر از راز و رمزها و فراز و نشیب‌هایی است که گاها از دل آن‌ها انسان‌هایی برجسته و تاریخ‌ساز زاده می‌شوند برای تغییر و تاثیر بر زندگی بشریت. پادکست رخ داستان زندگی این انسان‌هاست.",
         "thumbnailSrc":"https://rokhpodcast.ir/wp-content/uploads/2023/05/logo-website-300x115.png",
