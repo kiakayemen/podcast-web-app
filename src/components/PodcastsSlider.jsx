@@ -33,22 +33,24 @@ export default function PodcastsSlider() {
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
           >
-            {podcasts.map((episode, index) => (
+            {podcasts.map((podcast, index) => (
               <div
                 key={index}
                 className="w-full flex-shrink-0 p-6 bg-gray-100 rounded-2xl shadow-lg"
               >
-                <Image
-                  src={episode.thumbnailSrc}
-                  alt={episode.title}
-                  className="w-full h-60 object-cover rounded-md mb-4"
-                  width={800}
-                  height={800}
-                />
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {episode.title}
-                </h2>
-                <p className="text-gray-600">{episode.subtitle}</p>
+                <Link href={`/podcasts/${podcast.slug}/`}>
+                  <Image
+                    src={podcast.thumbnailSrc}
+                    alt={podcast.title}
+                    className="w-full h-60 object-cover rounded-md mb-4"
+                    width={800}
+                    height={800}
+                  />
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {podcast.title}
+                  </h2>
+                  <p className="text-gray-600">{podcast.subtitle}</p>
+                </Link>
               </div>
             ))}
           </div>

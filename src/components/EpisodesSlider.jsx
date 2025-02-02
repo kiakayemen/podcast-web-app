@@ -33,9 +33,9 @@ export default function EpisodesSlider({ creator }) {
 
   return (
     <>
-      <div>
+      <div className="container flex flex-col items-center md:flex-row">
         {filteredEpisodes.map((episode, index) => (
-          <Link key={index} href={episode.url + "/" + episode.id.toString()}>
+          <Link key={index} href={episode.podcast + "/" + episode.id.toString()}>
             <Card variant="outlined" sx={{ width: 320 }}>
               <CardOverflow>
                 <AspectRatio ratio="1">
@@ -45,7 +45,7 @@ export default function EpisodesSlider({ creator }) {
                     src={episode.thumbnailSrc}
                     loading="lazy"
                     alt=""
-                  />
+                    />
                 </AspectRatio>
               </CardOverflow>
               <CardContent>
@@ -55,14 +55,14 @@ export default function EpisodesSlider({ creator }) {
               <CardOverflow
                 variant="soft"
                 sx={{ bgcolor: "background.level1" }}
-              >
+                >
                 <Divider inset="context" />
                 <CardContent orientation="horizontal">
                   <Typography
                     level="body-xs"
                     textColor="text.secondary"
                     sx={{ fontWeight: "md" }}
-                  >
+                    >
                     {episode.creator}
                   </Typography>
                   <Divider orientation="vertical" />
@@ -70,7 +70,7 @@ export default function EpisodesSlider({ creator }) {
                     level="body-xs"
                     textColor="text.secondary"
                     sx={{ fontWeight: "md" }}
-                  >
+                    >
                     {convertTime(episode.duration)}
                   </Typography>
                   <Divider orientation="vertical" />
@@ -78,7 +78,7 @@ export default function EpisodesSlider({ creator }) {
                     level="body-xs"
                     textColor="text.secondary"
                     sx={{ fontWeight: "md" }}
-                  >
+                    >
                     {episode.date}
                   </Typography>
                 </CardContent>
@@ -86,6 +86,7 @@ export default function EpisodesSlider({ creator }) {
             </Card>
           </Link>
         ))}
+        </div>
         {creator === undefined && (
           <div className="px-5">
             <div className="relative w-full max-w-4xl mx-auto">
@@ -103,7 +104,10 @@ export default function EpisodesSlider({ creator }) {
                         key={index}
                         className="relative w-full flex-shrink-0 rounded-2xl shadow-lg"
                       >
-                        <div className="w-full">
+                        <Link
+                          href={`/podcasts/${episode.podcast}/${episode.id}`}
+                        >
+                          <div className="w-full">
                             <Image
                               src={episode.thumbnailSrc}
                               alt={episode.title}
@@ -111,18 +115,20 @@ export default function EpisodesSlider({ creator }) {
                               width={800}
                               height={800}
                             />
-                          <div className="">
                           </div>
-                        </div>
-                        <div dir="rtl" className="absolute right-0 bottom-0 p-2 w-full bg-white bg-opacity-70">
-                          <div>
-                            <h3 className="text-xl font-bold text-gray-800">
-                              {episode.title}
-                            </h3>
-                            <h3>{episode.creator}</h3>
+                          <div
+                            dir="rtl"
+                            className="absolute right-0 bottom-0 p-2 w-full bg-white bg-opacity-70"
+                          >
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-800">
+                                {episode.title}
+                              </h3>
+                              <h3>{episode.creator}</h3>
+                            </div>
+                            <p className="text-gray-600">{episode.subtitle}</p>
                           </div>
-                          <p className="text-gray-600">{episode.subtitle}</p>
-                        </div>
+                        </Link>
                       </div>
                     );
                   })}
@@ -145,7 +151,6 @@ export default function EpisodesSlider({ creator }) {
             </div>
           </div>
         )}
-      </div>
     </>
   );
 }

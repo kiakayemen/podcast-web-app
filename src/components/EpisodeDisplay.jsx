@@ -69,12 +69,12 @@ const EpisodeDisplay = ({ id }) => {
   return (
     <>
       <div className="flex flex-col w-full max-w-screen-lg mx-auto">
-        <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-start">
           <Image
-            width={180}
+            width={360}
+            height={360}
             className="rounded-xl"
             alt="Episode Cover"
-            height={180}
             src={data.episodes[id].thumbnailSrc}
           ></Image>
 
@@ -105,7 +105,7 @@ const EpisodeDisplay = ({ id }) => {
             </p>
             <div className="flex items-start">
               <button
-                className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background gap-3 rounded py-2 px-4 bg-accentColor"
+                className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background border-2 border-black gap-3 rounded py-2 px-4 hover:bg-black hover:text-white duration-200"
                 onClick={() => dispatch(togglePlay())}
               >
                 {isPlaying ? <FaPause /> : <FaPlay />}
@@ -181,7 +181,7 @@ const EpisodeDisplay = ({ id }) => {
             />
           </div>
           {/* progress bar */}
-          <div className="flex-1 flex items-center gap-4">
+          <div className="flex-1 flex items-center gap-4 w-full">
             <label
               className="sm:w-[70px] max-sm:text-xs "
               htmlFor="progress-bar"
@@ -196,7 +196,7 @@ const EpisodeDisplay = ({ id }) => {
             >
               <div
                 id="progress-bar"
-                className="h-1 w-full max-sm:min-w-52 bg-white relative rounded-xl overflow-visible"
+                className="h-1 w-full max-sm:min-w-52 bg-neutral-300 relative rounded-xl overflow-visible"
               >
                 {/* playing fraction */}
                 <div
@@ -206,14 +206,14 @@ const EpisodeDisplay = ({ id }) => {
                     transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
                     transition: "transform",
                   }}
-                  className={`z-20 bg-accentColor rounded-s-xl`}
+                  className={`z-20 bg-black rounded-s-xl`}
                 ></div>
                 {/* bullet at the end as an indicator */}
                 <div
                   style={{
                     left: `${percentagePlayed}%`,
                   }}
-                  className="w-3 h-3 z-20 rounded-full flex items-center justify-center bg-white -top-1 bottom-0 absolute"
+                  className="w-3 h-3 z-20 rounded-full flex items-center justify-center bg-black -top-1 bottom-0 absolute"
                 ></div>
               </div>
             </div>
