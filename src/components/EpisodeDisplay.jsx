@@ -9,7 +9,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
 import VolumeControl from "./VolumeControl";
-import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
+import { setTimePlayed, togglePlay, setCurrentEpisodeId } from "@/features/slices/playerSlice";
 import Carousel from "./Carousel";
 import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
@@ -20,6 +20,7 @@ const EpisodeDisplay = ({ id }) => {
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const timePlayed = useSelector((state) => state.player.timePlayed);
+  const currentEpisodeId = useSelector((state) => state.player.currentEpisodeId);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
   const [localTimePlayed, setLocalTimePlayed] = useState(0);
@@ -77,7 +78,6 @@ const EpisodeDisplay = ({ id }) => {
             alt="Episode Cover"
             src={data.episodes[id].thumbnailSrc}
           ></Image>
-
           <div className="flex flex-col gap-4">
             <h2 className="text-2xl text-center sm:text-left font-bold">
               {data.episodes[id].title}
@@ -106,7 +106,10 @@ const EpisodeDisplay = ({ id }) => {
             <div className="flex items-start">
               <button
                 className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background border-2 border-black gap-3 rounded py-2 px-4 hover:bg-black hover:text-white duration-200"
-                onClick={() => dispatch(togglePlay())}
+                onClick={() => {
+                  dispatch(togglePlay());
+                  dispatch(setCurrentEpisodeId(data.episodes[id].id))
+                }}
               >
                 {isPlaying ? <FaPause /> : <FaPlay />}
                 {isPlaying ? "Pause Episode" : "Play Episode"}
@@ -114,123 +117,10 @@ const EpisodeDisplay = ({ id }) => {
             </div>
           </div>
         </div>
-        <ReactPlayer
-          fallback={<CircleLoader color="#1ed760" />}
-          ref={playerRef}
-          onProgress={(data) => {
-            if (!isDragging) {
-              setLoaded(data.loaded);
-              setLocalTimePlayed(data.playedSeconds);
-              setPercentagePlayed(data.played * 100);
-            }
-          }}
-          className="my-6"
-          volume={volume / 100}
-          progressInterval={100}
-          controls={false}
-          playbackRate={playbackRate}
-          width="100%"
-          height="50px"
-          playing={isPlaying}
-          url={data.episodes[id].audioSrc}
-          // url="/media/audio-file.mp3"
-        />
-        {/* controls, progress bar & playback rate Container */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
-          {/* controls */}
-          <div className="flex gap-4">
-            <RiReplay15Fill
-              size={40}
-              className="cursor-pointer text-accentColor rounded-full p-1"
-              onClick={() => {
-                const newTime = Math.max(0, localTimePlayed - 15);
-                setLocalTimePlayed(newTime);
-                dispatch(setTimePlayed(newTime));
-                playerRef.current.seekTo(
-                  newTime / playerRef.current.getDuration()
-                );
-              }}
-            />
-            {isPlaying ? (
-              <FaPause
-                className="cursor-pointer text-accentColor rounded p-1"
-                onClick={() => dispatch(togglePlay())}
-                size={45}
-              />
-            ) : (
-              <FaPlay
-                className="cursor-pointer text-accentColor rounded p-1"
-                onClick={() => dispatch(togglePlay())}
-                size={45}
-              />
-            )}
-            <RiForward15Fill
-              size={40}
-              className="cursor-pointer text-accentColor rounded-full p-1"
-              onClick={() => {
-                const newTime = Math.min(
-                  playerRef.current.getDuration(),
-                  localTimePlayed + 15
-                );
-                setLocalTimePlayed(newTime);
-                dispatch(setTimePlayed(newTime));
-                playerRef.current.seekTo(
-                  newTime / playerRef.current.getDuration()
-                );
-              }}
-            />
-          </div>
-          {/* progress bar */}
-          <div className="flex-1 flex items-center gap-4 w-full">
-            <label
-              className="sm:w-[70px] max-sm:text-xs "
-              htmlFor="progress-bar"
-            >
-              {convertTime(localTimePlayed)}
-            </label>
-            <div
-              onMouseDown={(e) => handleMouseDown(e)}
-              onMouseMove={(e) => handleMouseMove(e)}
-              onMouseUp={(e) => handleMouseUp(e)}
-              className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
-            >
-              <div
-                id="progress-bar"
-                className="h-1 w-full max-sm:min-w-52 bg-neutral-300 relative rounded-xl overflow-visible"
-              >
-                {/* playing fraction */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
-                    transition: "transform",
-                  }}
-                  className={`z-20 bg-black rounded-s-xl`}
-                ></div>
-                {/* bullet at the end as an indicator */}
-                <div
-                  style={{
-                    left: `${percentagePlayed}%`,
-                  }}
-                  className="w-3 h-3 z-20 rounded-full flex items-center justify-center bg-black -top-1 bottom-0 absolute"
-                ></div>
-              </div>
-            </div>
-            <label
-              className="sm:w-[70px] max-sm:text-xs"
-              htmlFor="progress-bar"
-            >
-              {playerRef.current ? (
-                convertTime(playerRef.current.getDuration())
-              ) : (
-                <CircleLoader size={40} color="#1ed760" className="ml-2" />
-              )}
-            </label>
-          </div>
-          {/* volume & playback rate */}
+          {/* volume  */}
           <div className="flex gap-2 w-1/6 justify-evenly items-center">
             <VolumeControl volume={volume} setVolume={setVolume} />
+            {/* playback rate */}
             <ConfigProvider
               theme={{
                 token: {
@@ -249,7 +139,7 @@ const EpisodeDisplay = ({ id }) => {
               }}
             >
               <Select
-                defaultValue="x1"
+                defaultValue={`x${playbackRate}`}
                 style={{
                   width: 80,
                 }}
@@ -284,7 +174,6 @@ const EpisodeDisplay = ({ id }) => {
             </ConfigProvider>
           </div>
         </div>
-      </div>
       <Carousel id={id} />
     </>
   );

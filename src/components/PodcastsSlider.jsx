@@ -24,7 +24,29 @@ export default function PodcastsSlider() {
 
   return (
     <div className="px-5">
-      <div className="relative w-full max-w-4xl mx-auto">
+      <div className="hidden sm:flex flex-wrap content-stretch">
+        {podcasts.map((podcast, index) => (
+          <Link
+            key={index}
+            className="flex flex-col w-1/5 gap-5 justify-between items-start"
+            href={`podcasts/${podcast.slug}`}
+          >
+            <Image
+              className="self-center"
+              src={podcast.thumbnailSrc}
+              height={200}
+              width={200}
+            />
+            <div className="flex flex-col justify-center items-start w-full ">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {podcast.title}
+              </h2>
+              <p className="text-gray-600">{podcast.creator}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div className="relative w-full max-w-4xl mx-auto sm:hidden">
         {/* Slider Container */}
         <div className="overflow-hidden">
           <div
