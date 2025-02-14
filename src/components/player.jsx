@@ -4,7 +4,6 @@ import { FaUserLarge, FaClock } from "react-icons/fa6";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
-import { Select, ConfigProvider } from "antd";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
@@ -68,31 +67,36 @@ const Player = () => {
   }, [timePlayed]);
 
   return (
-    <div className={`fixed ${currentEpisodeId === null && "hidden"} bottom-0 bg-white sm:px-40 sm:py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}>
+    <div
+      className={`fixed ${
+        currentEpisodeId === null && "hidden"
+      } bottom-0 bg-white sm:px-40 sm:py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
+    >
       <div className="w-full">
-        
-        {currentEpisodeId !== null && (<ReactPlayer
-          fallback={<CircleLoader color="#1ed760" />}
-          ref={playerRef}
-          onProgress={(data) => {
-            if (!isDragging) {
-              setLoaded(data.loaded);
-              setLocalTimePlayed(data.playedSeconds);
-              setPercentagePlayed(data.played * 100);
-            }
-          }}
-          className="hidden"
-          volume={volume / 100}
-          progressInterval={100}
-          controls={false}
-          playbackRate={playbackRate}
-          width="100%"
-          height="50px"
-          playing={isPlaying}
-          url={data.episodes[currentEpisodeId]?.audioSrc}
-          // url="/media/audio-file.mp3"
-        />
-        )}<div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
+        {currentEpisodeId !== null && (
+          <ReactPlayer
+            fallback={<CircleLoader color="#1ed760" />}
+            ref={playerRef}
+            onProgress={(data) => {
+              if (!isDragging) {
+                setLoaded(data.loaded);
+                setLocalTimePlayed(data.playedSeconds);
+                setPercentagePlayed(data.played * 100);
+              }
+            }}
+            className="hidden"
+            volume={volume / 100}
+            progressInterval={100}
+            controls={false}
+            playbackRate={playbackRate}
+            width="100%"
+            height="50px"
+            playing={isPlaying}
+            url={data.episodes[currentEpisodeId]?.audioSrc}
+            // url="/media/audio-file.mp3"
+          />
+        )}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
           {/* controls */}
           <div className="flex gap-4">
             <RiReplay15Fill
@@ -138,9 +142,7 @@ const Player = () => {
           </div>
           {/* progress bar */}
           <div className="flex-1 flex items-center gap-4 w-full group">
-            <p
-              className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]"
-            >
+            <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
               {convertTime(localTimePlayed)}
             </p>
             <div
@@ -173,9 +175,7 @@ const Player = () => {
                 </div>
               </div>
             </div>
-            <p
-              className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]"
-            >
+            <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
               {playerRef.current ? (
                 convertTime(playerRef.current.getDuration())
               ) : (
