@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         >
         <Header />
           {children}
-          <Player />
+        <Player />
       </body>
         </StoreProvider>
     </html>
