@@ -32,8 +32,9 @@ export default function PodcastsSlider() {
             href={`podcasts/${podcast.slug}`}
           >
             <Image
-              className="self-center"
+              className=""
               src={podcast.thumbnailSrc}
+              alt={podcast.title}
               height={200}
               width={200}
             />

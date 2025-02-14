@@ -9,7 +9,11 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
 import VolumeControl from "./VolumeControl";
-import { setTimePlayed, togglePlay, setCurrentEpisodeId } from "@/features/slices/playerSlice";
+import {
+  setTimePlayed,
+  togglePlay,
+  setCurrentEpisodeId,
+} from "@/features/slices/playerSlice";
 import Carousel from "./Carousel";
 import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
@@ -20,7 +24,9 @@ const EpisodeDisplay = ({ id }) => {
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const timePlayed = useSelector((state) => state.player.timePlayed);
-  const currentEpisodeId = useSelector((state) => state.player.currentEpisodeId);
+  const currentEpisodeId = useSelector(
+    (state) => state.player.currentEpisodeId
+  );
   const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
   const [localTimePlayed, setLocalTimePlayed] = useState(0);
@@ -107,73 +113,79 @@ const EpisodeDisplay = ({ id }) => {
               <button
                 className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background border-2 border-black gap-3 rounded py-2 px-4 hover:bg-black hover:text-white duration-200"
                 onClick={() => {
+                  dispatch(setCurrentEpisodeId(data.episodes[id].id));
                   dispatch(togglePlay());
-                  dispatch(setCurrentEpisodeId(data.episodes[id].id))
                 }}
               >
-                {isPlaying ? <FaPause /> : <FaPlay />}
-                {isPlaying ? "Pause Episode" : "Play Episode"}
+                {isPlaying && currentEpisodeId === data.episodes[id].id ? (
+                  <FaPause />
+                ) : (
+                  <FaPlay />
+                )}
+                {isPlaying && currentEpisodeId === data.episodes[id].id
+                  ? "Pause Episode"
+                  : "Play Episode"}
               </button>
             </div>
           </div>
         </div>
-          {/* volume  */}
-          <div className="flex gap-2 w-1/6 justify-evenly items-center">
-            <VolumeControl volume={volume} setVolume={setVolume} />
-            {/* playback rate */}
-            <ConfigProvider
-              theme={{
-                token: {
-                  colorText: "#ffffff",
-                  colorBgContainer: "#121826",
-                  colorBgElevated: "#121826",
-                  colorTextQuaternary: "#fff",
+        {/* volume  */}
+        <div className="flex gap-2 w-1/6 justify-evenly items-center">
+          <VolumeControl volume={volume} setVolume={setVolume} />
+          {/* playback rate */}
+          <ConfigProvider
+            theme={{
+              token: {
+                colorText: "#ffffff",
+                colorBgContainer: "#121826",
+                colorBgElevated: "#121826",
+                colorTextQuaternary: "#fff",
+              },
+              components: {
+                Select: {
+                  selectorBg: "#121826",
+                  optionActiveBg: "#2c3958",
+                  optionSelectedBg: "#2c3958",
                 },
-                components: {
-                  Select: {
-                    selectorBg: "#121826",
-                    optionActiveBg: "#2c3958",
-                    optionSelectedBg: "#2c3958",
-                  },
-                },
+              },
+            }}
+          >
+            <Select
+              defaultValue={`x${playbackRate}`}
+              style={{
+                width: 80,
               }}
-            >
-              <Select
-                defaultValue={`x${playbackRate}`}
-                style={{
-                  width: 80,
-                }}
-                onChange={(rate) => setPlaybackRate(rate)}
-                options={[
-                  {
-                    value: 0.5,
-                    label: "x0.5",
-                  },
-                  {
-                    value: 1,
-                    label: "x1",
-                  },
-                  {
-                    value: 1.25,
-                    label: "x1.25",
-                  },
-                  {
-                    value: 1.5,
-                    label: "x1.5",
-                  },
-                  {
-                    value: 1.75,
-                    label: "x1.75",
-                  },
-                  {
-                    value: 2,
-                    label: "x2",
-                  },
-                ]}
-              />
-            </ConfigProvider>
-          </div>
+              onChange={(rate) => setPlaybackRate(rate)}
+              options={[
+                {
+                  value: 0.5,
+                  label: "x0.5",
+                },
+                {
+                  value: 1,
+                  label: "x1",
+                },
+                {
+                  value: 1.25,
+                  label: "x1.25",
+                },
+                {
+                  value: 1.5,
+                  label: "x1.5",
+                },
+                {
+                  value: 1.75,
+                  label: "x1.75",
+                },
+                {
+                  value: 2,
+                  label: "x2",
+                },
+              ]}
+            />
+          </ConfigProvider>
         </div>
+      </div>
       <Carousel id={id} />
     </>
   );

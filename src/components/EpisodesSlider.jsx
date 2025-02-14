@@ -103,6 +103,7 @@ export default function EpisodesSlider({ creator }) {
                     <Image
                       className="filter grayscale group-hover:grayscale-0 transition-all"
                       src={episode.thumbnailSrc}
+                      alt={episode.title}
                       height={300}
                       width={300}
                     />

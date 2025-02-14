@@ -2,9 +2,7 @@
 import { useState, useRef } from "react";
 import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 
-const VolumeControl = (props) => {
-  const volume = props.volume;
-  const setVolume = props.setVolume;
+const VolumeControl = ({ volume, setVolume }) => {
   const [isHovered, setIsHovered] = useState(false);
   const hoverRef = useRef(false);
 
@@ -27,18 +25,18 @@ const VolumeControl = (props) => {
       {/* Volume Icon */}
       <div
         className={`cursor-pointer ${
-          isHovered ? "text-accentColor" : "text-white"
+          isHovered ? "text-accentColor" : "text-black"
         }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-          >
+      >
         {volume === 0 ? <FaVolumeMute size={24} /> : <FaVolumeUp size={24} />}
       </div>
 
       {/* Tooltip (Slider + Label) */}
       {isHovered && (
         <div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-2 rounded shadow-lg"
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-white text-black border-2 border-black p-2 rounded shadow-lg"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -48,9 +46,9 @@ const VolumeControl = (props) => {
             max={100}
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-32 h-2 bg-gray-400 rounded-lg appearance-none cursor-pointer"
+            className="w-32 h-1 bg-black rounded-lg appearance-none cursor-pointer"
           />
-          <p className="text-xs text-center mt-1">{volume}%</p>
+          <p className="text-xs text-center mt-1 font-bold">{volume}%</p>
         </div>
       )}
     </div>

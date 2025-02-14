@@ -40,7 +40,6 @@ const Carousel = ({ id }) => {
     compareTime();
   }, [compareTime]);
 
-  
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Carousel Container */}
@@ -69,31 +68,29 @@ const Carousel = ({ id }) => {
         </div>
         {/* Navigation Arrows */}
         <button
-          className="absolute left-[-30px] top-1/2 -translate-y-1/2 p-2 rounded-full shadow"
+          className="absolute left-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full text-black hover:text-white hover:bg-black transition border border-black"
           onClick={() => {
             document
               .querySelector(".scrollbar-hide")
-              .scrollBy({ left: -200, behavior: "smooth" });
+              .scrollBy({ left: -250, behavior: "smooth" });
           }}
         >
           <MdArrowBackIos
             size={25}
-            color="#fff"
             className="transition duration-200 hover:text-accentColor"
           />
         </button>
         <button
-          className="absolute right-[-35px] top-1/2 -translate-y-1/2 p-2 rounded-full shadow"
+          className="absolute right-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full border-black border text-black hover:text-white hover:bg-black transition"
           onClick={() => {
             document
               .querySelector(".scrollbar-hide")
-              .scrollBy({ left: 200, behavior: "smooth" });
+              .scrollBy({ left: 250, behavior: "smooth" });
           }}
         >
           <MdArrowForwardIos
             size={25}
             className="transition duration-200 hover:text-accentColor"
-            color="#fff"
           />
         </button>
       </div>
