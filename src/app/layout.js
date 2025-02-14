@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <StoreProvider>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} select-none antialiased w-[100vw] h-full bg-white px-5 pb-12`}
+        className={`select-none antialiased w-[100vw] h-full bg-white px-5 pb-12`}
         >
         <Header />
           {children}
