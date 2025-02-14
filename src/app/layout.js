@@ -1,7 +1,7 @@
 import "./globals.css";
 import StoreProvider from "./storeProvider";
 import Header from "@/components/Header"
-import Player from "@/components/TestPlayer";
+import Player from "@/components/Player";
 
 
 export const metadata = {
