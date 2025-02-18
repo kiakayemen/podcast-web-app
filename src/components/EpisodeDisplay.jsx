@@ -75,7 +75,7 @@ const EpisodeDisplay = ({ id }) => {
 
   return (
     <>
-      <div className="flex flex-col w-full max-w-screen-lg mx-auto">
+      <div className="flex flex-col w-full max-w-screen-xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-start">
           <Image
             width={360}
@@ -85,7 +85,7 @@ const EpisodeDisplay = ({ id }) => {
             src={data.episodes[id].thumbnailSrc}
           ></Image>
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl text-center sm:text-left font-bold">
+            <h2 className="text-2xl text-center sm:text-right font-bold">
               {data.episodes[id].title}
             </h2>
             <div className="flex flex-wrap gap-3">

@@ -14,7 +14,7 @@ const Carousel = ({ id }) => {
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const timePlayed = useSelector((state) => state.player.timePlayed);
-  const items = data.episodes[0].episodeFractions;
+  const items = data.episodes[id].episodeFractions;
   // console.log(id);
   const convertTime = useConvertTime();
   const [value, setValue] = useState("1");
@@ -44,13 +44,13 @@ const Carousel = ({ id }) => {
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Carousel Container */}
       <div className="relative">
-        <div className="flex overflow-x-auto scrollbar-hide space-x-4">
+        <div className="flex overflow-x-auto scrollbar-hide gap-x-4">
           {items.map((item) => (
             <button
               key={item.id}
               className={`text-sm py-6 relative shrink-0 w-48 p-2 text-center border rounded-md ${
                 activeItem === item.id
-                  ? "bg-accentColor text-background border-background"
+                  ? "bg-black text-white"
                   : "border-foreground"
               }`}
               onClick={() => {
@@ -59,7 +59,7 @@ const Carousel = ({ id }) => {
                 isPlaying === false && dispatch(togglePlay());
               }}
             >
-              <p className="absolute text-[10px] right-1 top-1">
+              <p className="absolute text-[10px] font-bold left-1 top-1">
                 {convertTime(item.time)}
               </p>
               {item.title}
@@ -94,8 +94,8 @@ const Carousel = ({ id }) => {
           />
         </button>
       </div>
-      <div className="sm:w-screen max-w-screen-lg mt-5">
-        <Box sx={{ width: "100%", typography: "body1" }}>
+      <div className="sm:w-screen max-w-screen-lg mt-5 text-gray-600 text-md leading-8">
+        <Box sx={{ width: "100%" }}>
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <TabList
@@ -109,7 +109,9 @@ const Carousel = ({ id }) => {
                 <Tab className="text-white" label="Refrences" value="3" />
               </TabList>
             </Box>
-            <TabPanel value="1">{items[activeItem].content}</TabPanel>
+            <TabPanel dir="rtl" value="1">
+              {items[activeItem].content}
+            </TabPanel>
             <TabPanel value="2">Item Two</TabPanel>
             <TabPanel value="3">Item Three</TabPanel>
           </TabContext>

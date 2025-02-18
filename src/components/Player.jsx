@@ -5,6 +5,7 @@ import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
 import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
@@ -68,9 +69,9 @@ const Player = () => {
 
   return (
     <div
-      className={`fixed ${
-        currentEpisodeId === null && "hidden"
-      } bottom-0 bg-white sm:px-40 sm:py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
+      className={`${
+        currentEpisodeId === null ? "hidden" : "block"
+      } fixed bottom-0 bg-white sm:px-20 sm:py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
     >
       <div className="w-full">
         {currentEpisodeId !== null && (
@@ -97,53 +98,44 @@ const Player = () => {
           />
         )}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
-          {/* controls */}
-          <div className="flex gap-4">
-            <RiReplay15Fill
-              size={40}
-              className="cursor-pointer text-accentColor rounded-full p-1"
-              onClick={() => {
-                const newTime = Math.max(0, localTimePlayed - 15);
-                setLocalTimePlayed(newTime);
-                dispatch(setTimePlayed(newTime));
-                playerRef.current.seekTo(
-                  newTime / playerRef.current.getDuration()
-                );
-              }}
-            />
-            {isPlaying ? (
-              <FaPause
-                className="cursor-pointer text-accentColor rounded p-1"
-                onClick={() => dispatch(togglePlay())}
-                size={45}
-              />
-            ) : (
-              <FaPlay
-                className="cursor-pointer text-accentColor rounded p-1"
-                onClick={() => dispatch(togglePlay())}
-                size={45}
-              />
-            )}
-            <RiForward15Fill
-              size={40}
-              className="cursor-pointer text-accentColor rounded-full p-1"
-              onClick={() => {
-                const newTime = Math.min(
-                  playerRef.current.getDuration(),
-                  localTimePlayed + 15
-                );
-                setLocalTimePlayed(newTime);
-                dispatch(setTimePlayed(newTime));
-                playerRef.current.seekTo(
-                  newTime / playerRef.current.getDuration()
-                );
-              }}
-            />
-          </div>
-          {/* progress bar */}
+          {currentEpisodeId !== null ? (
+            <>
+              <Link
+                href={`/podcasts/${data.episodes[currentEpisodeId]?.podcast}/${currentEpisodeId}`}
+              >
+                <Image
+                  src={data.episodes[currentEpisodeId].thumbnailSrc}
+                  width={80}
+                  height={80}
+                  alt={`${data.episodes[currentEpisodeId]?.title}`}
+                />
+              </Link>
+              <div className="flex flex-col">
+                <Link
+                  href={`/podcasts/${data.episodes[currentEpisodeId].podcast}/${currentEpisodeId}`}
+                >
+                  <p className="text-md">
+                    {data.episodes[currentEpisodeId].title}
+                  </p>
+                </Link>
+                <Link
+                  href={`/podcasts/${data.episodes[currentEpisodeId].podcast}`}
+                >
+                  <p className="text-sm font-bold">
+                    {data.episodes[currentEpisodeId].creator}
+                  </p>
+                </Link>
+              </div>
+            </>
+          ) : null}
+          {/* progress bar & time */}
           <div className="flex-1 flex items-center gap-4 w-full group">
             <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
-              {convertTime(localTimePlayed)}
+              {playerRef.current ? (
+                convertTime(playerRef.current.getDuration())
+              ) : (
+                <CircleLoader size={40} color="#1ed760" className="ml-2" />
+              )}
             </p>
             <div
               onMouseDown={(e) => handleMouseDown(e)}
@@ -176,12 +168,51 @@ const Player = () => {
               </div>
             </div>
             <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
-              {playerRef.current ? (
-                convertTime(playerRef.current.getDuration())
-              ) : (
-                <CircleLoader size={40} color="#1ed760" className="ml-2" />
-              )}
+              {convertTime(localTimePlayed)}
             </p>
+          </div>
+          {/* controls */}
+          <div className="flex gap-4">
+            <RiForward15Fill
+              size={40}
+              className="cursor-pointer text-accentColor rounded-full p-1"
+              onClick={() => {
+                const newTime = Math.min(
+                  playerRef.current.getDuration(),
+                  localTimePlayed + 15
+                );
+                setLocalTimePlayed(newTime);
+                dispatch(setTimePlayed(newTime));
+                playerRef.current.seekTo(
+                  newTime / playerRef.current.getDuration()
+                );
+              }}
+            />
+            {isPlaying ? (
+              <FaPause
+                className="cursor-pointer text-accentColor rounded p-1"
+                onClick={() => dispatch(togglePlay())}
+                size={45}
+              />
+            ) : (
+              <FaPlay
+                className="cursor-pointer text-accentColor rounded p-1"
+                onClick={() => dispatch(togglePlay())}
+                size={45}
+              />
+            )}
+            <RiReplay15Fill
+              size={40}
+              className="cursor-pointer text-accentColor rounded-full p-1"
+              onClick={() => {
+                const newTime = Math.max(0, localTimePlayed - 15);
+                setLocalTimePlayed(newTime);
+                dispatch(setTimePlayed(newTime));
+                playerRef.current.seekTo(
+                  newTime / playerRef.current.getDuration()
+                );
+              }}
+            />
           </div>
         </div>
       </div>
