@@ -123,15 +123,15 @@ const Player = () => {
           width="100%"
           height="50px"
           playing={isPlaying}
-          url={data.episodes[currentEpisodeId]?.audioSrc}
+          url={data.episodes[currentEpisodeId].audioSrc}
           // url="/media/audio-file.mp3"
         />
       )}
       {/* bottom fixed player on Mobile */}
-      {currentEpisodeId && (
+      {currentEpisodeId !== null && (
         <div
-          className={`${isMobile ? "flex" : "hidden"} ${
-            isMobileModalOpen ? "hidden" : "flex"
+          className={`${
+            isMobile & (isMobileModalOpen === false) ? "flex" : "hidden"
           } fixed flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
           onClick={setMobileModalOpen}
         >

@@ -109,9 +109,7 @@ const Carousel = ({ id }) => {
                 <Tab className="text-white" label="Refrences" value="3" />
               </TabList>
             </Box>
-            <TabPanel dir="rtl" value="1">
-              {items[activeItem].content}
-            </TabPanel>
+            <TabPanel value="1">{items[activeItem].content}</TabPanel>
             <TabPanel value="2">Item Two</TabPanel>
             <TabPanel value="3">Item Three</TabPanel>
           </TabContext>
