@@ -53,7 +53,7 @@ export default function PodcastsSlider() {
           <div
             className="flex transition-transform duration-500"
             style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
+              transform: `translateX(+${currentIndex * 100}%)`,
             }}
           >
             {podcasts.map((podcast, index) => (
@@ -66,8 +66,8 @@ export default function PodcastsSlider() {
                     src={podcast.thumbnailSrc}
                     alt={podcast.title}
                     className="w-full h-60 object-cover rounded-md mb-4"
-                    width={800}
-                    height={800}
+                    width={350}
+                    height={350}
                   />
                   <h2 className="text-2xl font-bold text-gray-800">
                     {podcast.title}
@@ -82,13 +82,13 @@ export default function PodcastsSlider() {
         {/* Navigation Buttons */}
         <button
           onClick={prevSlide}
-          className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
+          className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
         >
           ❮
         </button>
         <button
           onClick={nextSlide}
-          className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
+          className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
         >
           ❯
         </button>

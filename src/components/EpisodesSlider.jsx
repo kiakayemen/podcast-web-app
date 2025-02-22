@@ -128,7 +128,7 @@ export default function EpisodesSlider({ creator }) {
               <div
                 className="flex transition-transform duration-500"
                 style={{
-                  transform: `translateX(-${currentIndex * 100}%)`,
+                  transform: `translateX(+${currentIndex * 100}%)`,
                 }}
               >
                 {episodes.map((episode, index) => {
@@ -142,20 +142,17 @@ export default function EpisodesSlider({ creator }) {
                           <Image
                             src={episode.thumbnailSrc}
                             alt={episode.title}
-                            className="w-full h-60 object-cover rounded-md filter grayscale hover:blur-xs"
-                            width={800}
-                            height={800}
+                            className="w-full h-80 object-cover rounded-md filter grayscale hover:blur-xs"
+                            width={350}
+                            height={350}
                           />
                         </div>
-                        <div
-                          dir="rtl"
-                          className="absolute right-0 bottom-0 p-2 w-full bg-white bg-opacity-70"
-                        >
+                        <div className="absolute right-0 bottom-0 p-2 w-full bg-white bg-opacity-85">
                           <div>
-                            <h3 className="text-xl font-bold text-gray-800">
+                            <h3 className="font-bold text-gray-800">
                               {episode.title}
                             </h3>
-                            <h3>{episode.creator}</h3>
+                            <h3 className="text-sm">{episode.creator}</h3>
                           </div>
                           <p className="text-gray-600">{episode.subtitle}</p>
                         </div>
@@ -169,13 +166,13 @@ export default function EpisodesSlider({ creator }) {
             {/* Navigation Buttons */}
             <button
               onClick={prevSlide}
-              className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
+              className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
             >
               ❮
             </button>
             <button
               onClick={nextSlide}
-              className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
+              className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full shadow-md"
             >
               ❯
             </button>
