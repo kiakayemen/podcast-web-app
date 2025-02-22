@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import Loading from "@/app/loading"
 import "./globals.css";
 import StoreProvider from "./storeProvider";
 import Header from "@/components/Header"
@@ -21,11 +23,13 @@ export default function RootLayout({ children }) {
     <html lang="fa" dir="rtl" className={IRANSans.className} >
       <StoreProvider>
       <body
-        className={`select-none antialiased w-[100vw] h-full bg-white px-5 pb-12`}
+        className={`select-none antialiased w-[100vw] h-full bg-white px-5 pb-40 `}
         >
-        <Header />
+          <Header />
+        <Suspense fallback={<Loading/>}>
           {children}
-        <Player />
+          <Player />
+        </Suspense>
       </body>
         </StoreProvider>
     </html>

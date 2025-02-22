@@ -93,7 +93,7 @@ export default function EpisodesSlider({ creator }) {
       {creator === undefined && (
         <div className="px-5">
           {
-            <div className="hidden sm:flex gap-5 flex-wrap content-stretch">
+            <div className="hidden sm:flex gap-10 flex-wrap content-stretch">
               {episodes.map((episode, index) => (
                 <div
                   key={index}
@@ -101,19 +101,23 @@ export default function EpisodesSlider({ creator }) {
                 >
                   <Link href={`podcasts/${episode.podcast}/${episode.id}`}>
                     <Image
-                      className="filter grayscale group-hover:grayscale-0 transition-all"
+                      className="filter grayscale group-hover:grayscale-0 transition-all mb-2"
                       src={episode.thumbnailSrc}
                       alt={episode.title}
                       height={300}
                       width={300}
                     />
-                    <div className="flex flex-col justify-center items-start w-full ">
+                  </Link>
+                  <div className="flex flex-col justify-center items-start w-full ">
+                    <Link href={`podcasts/${episode.podcast}/${episode.id}`}>
                       <h3 className="text-xl font-bold text-gray-800">
                         {episode.title}
                       </h3>
+                    </Link>
+                    <Link href={`podcasts/${episode.podcast}`}>
                       <p className="text-gray-600">{episode.creator}</p>
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

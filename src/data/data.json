@@ -3,10 +3,10 @@
         {
             "id": 0,
             "title": "Episode 158 - گنجه | از ایده تا سرمایه‌گذاری دیجی‌کالا",
-            "creator": "Tabaghe 16",
+            "creator": "طبقه ۱۶",
             "duration": 7678,
             "date": "2024-11-15",
-            "speakers": "parham kazemi, ahmad nabipoor",
+            "speakers": "پرهام کاظمی و احمد نبی‌پور",
             "summary": "در این قسمت، در مورد شکل‌گیری گنجه، مسیر کارآفرینی بنیان‌گذارا، چالش‌های پیش‌رو و استراتژی‌های اون‌ها برای غلبه به مشکلات درصنعت در حال تحول بخش لجستیک ایران صحبت کردیم.",
             "thumbnailSrc": "https://assets.pippa.io/shows/625bd31dc030a00012e0dba7/1731641599256-6a33bcde-1548-43b6-a4f7-430dfcf000ab.jpeg",
             "audioSrc": "https://sphinx.acast.com/p/open/s/625bd31dc030a00012e0dba7/e/6736c112ba4404855a63e8c5/media.mp3",
@@ -107,10 +107,10 @@
         {
             "id": 1,
             "title": "داستان زندگی خاندان کیم در کره شمالی",
-            "creator": "Rokh Podcast",
+            "creator": "پادکست رخ",
             "duration": 3437,
             "date": "2022-08-27",
-            "speakers": "Amir Soodbakhsh",
+            "speakers": "امیر سودبخش",
             "summary": "در این ایپزود قصد داریم سری به یکی دیگر از چهره‌های شاخص و تاثیرگذار تاریخ بزنیم.",
             "thumbnailSrc": "https://rokhpodcast.ir/wp-content/uploads/2023/05/خاندان-کیم-1536x1536.webp",
             "audioSrc": "https://sphinx.acast.com/p/open/s/65e095ffbec0f30016047f7e/e/rokhpodcast.podbean.com%2Fe781cda4-a154-374a-bb7a-acd5192cefb5/media.mp3",
@@ -200,18 +200,18 @@
     "podcasts": [
         {
             "id": 0,
-            "title": "Tabaghe 16",
+            "title": "طبقه ۱۶",
             "slug": "tabaghe-16",
-            "creator": "Soheyl Alavi",
+            "creator": "سهیل علوی",
             "description": "در این پادکست، با بنیان‌گذاران و کارآفرینان ایرانی صحبت می‌کنیم و داستان‌های آن‌ها را برای شما روایت می‌کنیم.",
             "thumbnailSrc": "https://i.scdn.co/image/ab6765630000ba8a2204d2f7fe7ff2ebf62f5d29",
             "url": "/podcasts/tabaghe16"
         },
         {
             "id": 1,
-            "title": "Rokh Podcast",
+            "title": "پادکست رخ",
             "slug": "rokh-podcast",
-            "creator": "Amir Soodbakhsh",
+            "creator": "امیر سودبخش",
             "description": "هر زندگی زیسته پر از راز و رمزها و فراز و نشیب‌هایی است که گاها از دل آن‌ها انسان‌هایی برجسته و تاریخ‌ساز زاده می‌شوند برای تغییر و تاثیر بر زندگی بشریت. پادکست رخ داستان زندگی این انسان‌هاست.",
             "thumbnailSrc": "https://rokhpodcast.ir/wp-content/uploads/2023/05/logo-website-300x115.png",
             "url": "/podcasts/rokh"
