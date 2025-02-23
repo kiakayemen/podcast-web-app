@@ -34,6 +34,7 @@ const Player = () => {
   const [isMobileModalOpen, setMobileModalOpen] = useState(false);
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
     checkMobile();
@@ -43,9 +44,22 @@ const Player = () => {
 
   // close the mobile player modal by clicking anywhere on the screen
   const handleModalClick = (e) => {
-    if (e.target.id === "modal-overlay") {
+    if (
+      e.target.id === "modal-overlay" &&
+      e.target.id !== "mobile-toggle-play-icon"
+    ) {
       setMobileModalOpen(false);
     }
+  };
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleModalClose = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setMobileModalOpen(false);
+      setIsAnimating(false);
+    }, 300); // Match animation duration
   };
 
   // use Space key to togglePlay
@@ -131,9 +145,9 @@ const Player = () => {
       {currentEpisodeId !== null && (
         <div
           className={`${
-            isMobile & (isMobileModalOpen === false) ? "flex" : "hidden"
+            isMobile && !isMobileModalOpen ? "flex" : "hidden"
           } fixed flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
-          onClick={setMobileModalOpen}
+          onClick={() => setMobileModalOpen(true)}
         >
           <div className="cursor-pointer w-full overflow-hidden flex items-center">
             <div
@@ -167,20 +181,119 @@ const Player = () => {
                 {data.episodes[currentEpisodeId].creator}
               </p>
             </div>
-            <div>
+            <div id="mobile-toggle-play-icon">
               {isPlaying ? (
                 <FaPause
                   className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={() => dispatch(togglePlay())}
-                  size={45}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(togglePlay());
+                  }}
+                  size={30}
                 />
               ) : (
                 <FaPlay
                   className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={() => dispatch(togglePlay())}
-                  size={45}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(togglePlay());
+                  }}
+                  size={30}
                 />
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Mobile Modal */}
+      {isMobileModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 sm:hidden"
+          onClick={(e) => {
+            if (e.target.dataset.modalOverlay) {
+              handleModalClose();
+            }
+          }}
+          data-modal-overlay
+        >
+          <div
+            className={`bg-white rounded-lg p-6 relative ${
+              isAnimating ? "animate-genie-out" : "animate-genie-in"
+            }`}
+            style={{
+              transformOrigin: "bottom center",
+              animation: `${
+                isAnimating ? "genie-out" : "genie-in"
+              } 0.3s ease-out forwards`,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleModalClose}
+              className="absolute top-2 right-2"
+            >
+              ❌
+            </button>
+            <div className="flex flex-col items-center gap-4">
+              <Image
+                src={data.episodes[currentEpisodeId]?.thumbnailSrc}
+                width={200}
+                height={200}
+                alt="Episode thumbnail"
+              />
+              <p className="text-xl font-bold">
+                {data.episodes[currentEpisodeId]?.title}
+              </p>
+              <p className="text-lg">
+                {data.episodes[currentEpisodeId]?.creator}
+              </p>
+              <div
+                onMouseDown={(e) => handleMouseDown(e)}
+                onMouseMove={(e) => handleMouseMove(e)}
+                onMouseUp={(e) => handleMouseUp(e)}
+                className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
+              >
+                <div
+                  id="progress-bar"
+                  className="h-1 w-full max-sm:min-w-52 bg-neutral-300 relative rounded-xl overflow-visible"
+                >
+                  {/* playing fraction */}
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
+                      transition: "transform",
+                    }}
+                    className="z-20 bg-black rounded-s-xl"
+                  >
+                    {/* bullet at the end as an indicator */}
+                    <div
+                      // style={{
+                      //   left: `${percentagePlayed}%`,
+                      // }}
+                      className="w-3 h-3 z-20 rounded-full opacity-0 flex group-hover:opacity-100 items-center justify-center bg-black -top-1 bottom-0 right-[-6px] absolute transition-all"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              {/* Controls */}
+              <div className="flex gap-4">
+                <RiForward15Fill
+                  size={40}
+                  onClick={() => dispatch(setTimePlayed(localTimePlayed + 15))}
+                />
+
+                {isPlaying ? (
+                  <FaPause size={45} onClick={() => dispatch(togglePlay())} />
+                ) : (
+                  <FaPlay size={45} onClick={() => dispatch(togglePlay())} />
+                )}
+                <RiReplay15Fill
+                  size={40}
+                  onClick={() => dispatch(setTimePlayed(localTimePlayed - 15))}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -190,7 +303,7 @@ const Player = () => {
         className={`${
           currentEpisodeId === null || isMobile ? "hidden" : "flex"
         } fixed bottom-0 bg-white px-20 py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
-        onClick={handleModalClick}
+        onClick={() => handleModalClick}
       >
         <div className="w-full">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
@@ -314,226 +427,7 @@ const Player = () => {
           </div>
         </div>
       </div>
-      {/* Mobile Modal */}
-      {isMobileModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 sm:hidden"
-          onClick={handleModalClick}
-        >
-          <div
-            className="bg-white rounded-lg p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setMobileModalOpen(false)}
-              className="absolute top-2 right-2"
-            >
-              ❌
-            </button>
-            <div className="flex flex-col items-center gap-4">
-              <Image
-                src={data.episodes[currentEpisodeId]?.thumbnailSrc}
-                width={200}
-                height={200}
-                alt="Episode thumbnail"
-              />
-              <p className="text-xl font-bold">
-                {data.episodes[currentEpisodeId]?.title}
-              </p>
-              <p className="text-lg">
-                {data.episodes[currentEpisodeId]?.creator}
-              </p>
-              {/* Controls */}
-              <div className="flex gap-4">
-                <RiReplay15Fill
-                  size={40}
-                  onClick={() => dispatch(setTimePlayed(localTimePlayed - 15))}
-                />
-                {isPlaying ? (
-                  <FaPause size={45} onClick={() => dispatch(togglePlay())} />
-                ) : (
-                  <FaPlay size={45} onClick={() => dispatch(togglePlay())} />
-                )}
-                <RiForward15Fill
-                  size={40}
-                  onClick={() => dispatch(setTimePlayed(localTimePlayed + 15))}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
 export default Player;
-
-// "use client";
-// import { FaPlay, FaPause } from "react-icons/fa";
-// import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
-// import { CircleLoader } from "react-spinners";
-// import { useState, useRef, useEffect } from "react";
-// import Image from "next/image";
-// import Link from "next/link";
-// import dynamic from "next/dynamic";
-// import { useSelector, useDispatch } from "react-redux";
-// import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
-// import data from "@/data/data.json";
-// import useConvertTime from "@/lib/hooks/useConvertTime";
-// const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
-
-// const Player = () => {
-//   const playerRef = useRef(null);
-//   const dispatch = useDispatch();
-//   const isPlaying = useSelector((state) => state.player.isPlaying);
-//   const timePlayed = useSelector((state) => state.player.timePlayed);
-//   const currentEpisodeId = useSelector(
-//     (state) => state.player.currentEpisodeId
-//   );
-//   const [localTimePlayed, setLocalTimePlayed] = useState(0);
-//   const [percentagePlayed, setPercentagePlayed] = useState(0);
-//   const [isDragging, setIsDragging] = useState(false);
-//   const [isMobileModalOpen, setMobileModalOpen] = useState(false);
-//   const convertTime = useConvertTime();
-
-//   useEffect(() => {
-//     setLocalTimePlayed(timePlayed);
-//   }, [timePlayed]);
-
-//   return (
-//     <>
-//       {/* Fixed Player for Desktop */}
-//       <div
-//         className={`${
-//           currentEpisodeId === null ? "hidden" : "block"
-//         } fixed bottom-0 bg-white sm:px-20 sm:py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center sm:flex`}
-//       >
-//         {/* Player Content */}
-//         {currentEpisodeId !== null && (
-//           <ReactPlayer
-//             ref={playerRef}
-//             onProgress={(data) => {
-//               if (!isDragging) {
-//                 setLocalTimePlayed(data.playedSeconds);
-//                 setPercentagePlayed(data.played * 100);
-//               }
-//             }}
-//             className="hidden"
-//             controls={false}
-//             playing={isPlaying}
-//             url={data.episodes[currentEpisodeId]?.audioSrc}
-//           />
-//         )}
-//         <div className="flex gap-4 items-center w-full">
-//           {/* Thumbnail & Details */}
-//           {currentEpisodeId !== null && (
-//             <>
-//               <Image
-//                 src={data.episodes[currentEpisodeId].thumbnailSrc}
-//                 width={80}
-//                 height={80}
-//                 alt={data.episodes[currentEpisodeId]?.title}
-//                 className="sm:block hidden"
-//               />
-//               <div className="flex flex-col sm:block hidden">
-//                 <p className="text-md">
-//                   {data.episodes[currentEpisodeId].title}
-//                 </p>
-//                 <p className="text-sm font-bold">
-//                   {data.episodes[currentEpisodeId].creator}
-//                 </p>
-//               </div>
-//             </>
-//           )}
-//           {/* Controls */}
-//           <div className="flex gap-4">
-//             <RiForward15Fill
-//               size={40}
-//               className="cursor-pointer"
-//               onClick={() => dispatch(setTimePlayed(localTimePlayed + 15))}
-//             />
-//             {isPlaying ? (
-//               <FaPause
-//                 className="cursor-pointer"
-//                 onClick={() => dispatch(togglePlay())}
-//                 size={45}
-//               />
-//             ) : (
-//               <FaPlay
-//                 className="cursor-pointer"
-//                 onClick={() => dispatch(togglePlay())}
-//                 size={45}
-//               />
-//             )}
-//             <RiReplay15Fill
-//               size={40}
-//               className="cursor-pointer"
-//               onClick={() => dispatch(setTimePlayed(localTimePlayed - 15))}
-//             />
-//           </div>
-//         </div>
-//       </div>
-
-// {/* Mobile Player - Minimized */}
-// <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black sm:hidden flex items-center p-3">
-//   <Image
-//     src={data.episodes[currentEpisodeId]?.thumbnailSrc}
-//     width={40}
-//     height={40}
-//     alt="Episode thumbnail"
-//   />
-//   <div className="flex-1 mx-3">
-//     <p className="text-sm">{data.episodes[currentEpisodeId]?.title}</p>
-//     <p className="text-xs">{data.episodes[currentEpisodeId]?.creator}</p>
-//   </div>
-//   <button onClick={() => setMobileModalOpen(true)}>🔍</button>
-// </div>
-
-//       {/* Mobile Modal */}
-//       {isMobileModalOpen && (
-//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 sm:hidden">
-//           <div className="bg-white rounded-lg p-6 relative">
-//             <button
-//               onClick={() => setMobileModalOpen(false)}
-//               className="absolute top-2 right-2"
-//             >
-//               ❌
-//             </button>
-//             <div className="flex flex-col items-center gap-4">
-//               <Image
-//                 src={data.episodes[currentEpisodeId]?.thumbnailSrc}
-//                 width={200}
-//                 height={200}
-//                 alt="Episode thumbnail"
-//               />
-//               <p className="text-xl font-bold">
-//                 {data.episodes[currentEpisodeId]?.title}
-//               </p>
-//               <p className="text-lg">
-//                 {data.episodes[currentEpisodeId]?.creator}
-//               </p>
-//               {/* Controls */}
-//               <div className="flex gap-4">
-//                 <RiReplay15Fill
-//                   size={40}
-//                   onClick={() => dispatch(setTimePlayed(localTimePlayed - 15))}
-//                 />
-//                 {isPlaying ? (
-//                   <FaPause size={45} onClick={() => dispatch(togglePlay())} />
-//                 ) : (
-//                   <FaPlay size={45} onClick={() => dispatch(togglePlay())} />
-//                 )}
-//                 <RiForward15Fill
-//                   size={40}
-//                   onClick={() => dispatch(setTimePlayed(localTimePlayed + 15))}
-//                 />
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </>
-//   );
-// };
-
-// export default Player;
