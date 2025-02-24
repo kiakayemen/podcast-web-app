@@ -42,16 +42,6 @@ const Player = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // close the mobile player modal by clicking anywhere on the screen
-  const handleModalClick = (e) => {
-    if (
-      e.target.id === "modal-overlay" &&
-      e.target.id !== "mobile-toggle-play-icon"
-    ) {
-      setMobileModalOpen(false);
-    }
-  };
-
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleModalClose = () => {
@@ -59,7 +49,7 @@ const Player = () => {
     setTimeout(() => {
       setMobileModalOpen(false);
       setIsAnimating(false);
-    }, 300); // Match animation duration
+    }, 200); // Match animation duration
   };
 
   // use Space key to togglePlay
@@ -181,7 +171,7 @@ const Player = () => {
                 {data.episodes[currentEpisodeId].creator}
               </p>
             </div>
-            <div id="mobile-toggle-play-icon">
+            <div>
               {isPlaying ? (
                 <FaPause
                   className="cursor-pointer text-accentColor rounded p-1"
@@ -223,8 +213,8 @@ const Player = () => {
             style={{
               transformOrigin: "bottom center",
               animation: `${
-                isAnimating ? "genie-out" : "genie-in"
-              } 0.3s ease-out forwards`,
+                isAnimating ? "genie-out ease-in" : "genie-in ease-out"
+              } 0.2s forwards`,
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -303,7 +293,6 @@ const Player = () => {
         className={`${
           currentEpisodeId === null || isMobile ? "hidden" : "flex"
         } fixed bottom-0 bg-white px-20 py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
-        onClick={() => handleModalClick}
       >
         <div className="w-full">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
