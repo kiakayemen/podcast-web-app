@@ -1,8 +1,8 @@
 "use client";
-import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
-import { FaUserLarge, FaClock } from "react-icons/fa6";
+import { FaPlay, FaPause } from "react-icons/fa";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { CircleLoader } from "react-spinners";
+import { Select, ConfigProvider } from "antd";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -207,9 +207,7 @@ const Player = () => {
           data-modal-overlay
         >
           <div
-            className={`bg-white rounded-lg p-6 relative ${
-              isAnimating ? "animate-genie-out" : "animate-genie-in"
-            }`}
+            className="bg-white rounded-lg p-6 relative"
             style={{
               transformOrigin: "bottom center",
               animation: `${
@@ -224,19 +222,27 @@ const Player = () => {
             >
               ❌
             </button>
-            <div className="flex flex-col items-center gap-4">
+            <div className="">
               <Image
                 src={data.episodes[currentEpisodeId]?.thumbnailSrc}
-                width={200}
-                height={200}
+                width={250}
+                height={250}
                 alt="Episode thumbnail"
+                className="mx-auto"
               />
-              <p className="text-xl font-bold">
+              <p className="text-lg font-bold text-center mt-4 mb-1">
                 {data.episodes[currentEpisodeId]?.title}
               </p>
-              <p className="text-lg">
+              <p className="text-center">
                 {data.episodes[currentEpisodeId]?.creator}
               </p>
+              <div className="w-full flex justify-between mt-2">
+                <p>
+                  {playerRef.current &&
+                    convertTime(playerRef.current.getDuration())}
+                </p>
+                <p> {convertTime(localTimePlayed)}</p>
+              </div>
               <div
                 onMouseDown={(e) => handleMouseDown(e)}
                 onMouseMove={(e) => handleMouseMove(e)}
@@ -267,22 +273,81 @@ const Player = () => {
                   </div>
                 </div>
               </div>
-              {/* Controls */}
-              <div className="flex gap-4">
-                <RiForward15Fill
-                  size={40}
-                  onClick={() => dispatch(setTimePlayed(localTimePlayed + 15))}
-                />
+              {/* controls and playback rate */}
+              <div className="flex justify-between items-center mt-4">
+                {/* playback rate */}
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorText: "#ffffff",
+                      colorBgContainer: "#121826",
+                      colorBgElevated: "#121826",
+                      colorTextQuaternary: "#fff",
+                    },
+                    components: {
+                      Select: {
+                        selectorBg: "#121826",
+                        optionActiveBg: "#2c3958",
+                        optionSelectedBg: "#2c3958",
+                      },
+                    },
+                  }}
+                >
+                  <Select
+                    defaultValue={1}
+                    style={{
+                      width: 80,
+                    }}
+                    onChange={(rate) => setPlaybackRate(rate)}
+                    options={[
+                      {
+                        value: 0.5,
+                        label: "x0.5",
+                      },
+                      {
+                        value: 1,
+                        label: "x1",
+                      },
+                      {
+                        value: 1.25,
+                        label: "x1.25",
+                      },
+                      {
+                        value: 1.5,
+                        label: "x1.5",
+                      },
+                      {
+                        value: 1.75,
+                        label: "x1.75",
+                      },
+                      {
+                        value: 2,
+                        label: "x2",
+                      },
+                    ]}
+                  />
+                </ConfigProvider>
+                {/* Controls */}
+                <div className="flex gap-2">
+                  <RiForward15Fill
+                    size={35}
+                    onClick={() =>
+                      dispatch(setTimePlayed(localTimePlayed + 15))
+                    }
+                  />
 
-                {isPlaying ? (
-                  <FaPause size={45} onClick={() => dispatch(togglePlay())} />
-                ) : (
-                  <FaPlay size={45} onClick={() => dispatch(togglePlay())} />
-                )}
-                <RiReplay15Fill
-                  size={40}
-                  onClick={() => dispatch(setTimePlayed(localTimePlayed - 15))}
-                />
+                  {isPlaying ? (
+                    <FaPause size={35} onClick={() => dispatch(togglePlay())} />
+                  ) : (
+                    <FaPlay size={35} onClick={() => dispatch(togglePlay())} />
+                  )}
+                  <RiReplay15Fill
+                    size={35}
+                    onClick={() =>
+                      dispatch(setTimePlayed(localTimePlayed - 15))
+                    }
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -370,48 +435,102 @@ const Player = () => {
                 {convertTime(localTimePlayed)}
               </p>
             </div>
-            {/* controls */}
-            <div className="flex gap-4">
-              <RiForward15Fill
-                size={40}
-                className="cursor-pointer text-accentColor rounded-full p-1"
-                onClick={() => {
-                  const newTime = Math.min(
-                    playerRef.current.getDuration(),
-                    localTimePlayed + 15
-                  );
-                  setLocalTimePlayed(newTime);
-                  dispatch(setTimePlayed(newTime));
-                  playerRef.current.seekTo(
-                    newTime / playerRef.current.getDuration()
-                  );
+            {/* controls and playback rate */}
+            <div className="flex justify-between items-center gap-6">
+              {/* playback rate */}
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorText: "#ffffff",
+                    colorBgContainer: "#121826",
+                    colorBgElevated: "#121826",
+                    colorTextQuaternary: "#fff",
+                  },
+                  components: {
+                    Select: {
+                      selectorBg: "#121826",
+                      optionActiveBg: "#2c3958",
+                      optionSelectedBg: "#2c3958",
+                    },
+                  },
                 }}
-              />
-              {isPlaying ? (
-                <FaPause
-                  className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={() => dispatch(togglePlay())}
-                  size={45}
+              >
+                <Select
+                  defaultValue={1}
+                  style={{
+                    width: 80,
+                  }}
+                  onChange={(rate) => setPlaybackRate(rate)}
+                  options={[
+                    {
+                      value: 0.5,
+                      label: "x0.5",
+                    },
+                    {
+                      value: 1,
+                      label: "x1",
+                    },
+                    {
+                      value: 1.25,
+                      label: "x1.25",
+                    },
+                    {
+                      value: 1.5,
+                      label: "x1.5",
+                    },
+                    {
+                      value: 1.75,
+                      label: "x1.75",
+                    },
+                    {
+                      value: 2,
+                      label: "x2",
+                    },
+                  ]}
                 />
-              ) : (
-                <FaPlay
-                  className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={() => dispatch(togglePlay())}
-                  size={45}
+              </ConfigProvider>
+              <div className="flex gap-3 items-center">
+                <RiForward15Fill
+                  size={40}
+                  className="cursor-pointer text-accentColor rounded-full p-1"
+                  onClick={() => {
+                    const newTime = Math.min(
+                      playerRef.current.getDuration(),
+                      localTimePlayed + 15
+                    );
+                    setLocalTimePlayed(newTime);
+                    dispatch(setTimePlayed(newTime));
+                    playerRef.current.seekTo(
+                      newTime / playerRef.current.getDuration()
+                    );
+                  }}
                 />
-              )}
-              <RiReplay15Fill
-                size={40}
-                className="cursor-pointer text-accentColor rounded-full p-1"
-                onClick={() => {
-                  const newTime = Math.max(0, localTimePlayed - 15);
-                  setLocalTimePlayed(newTime);
-                  dispatch(setTimePlayed(newTime));
-                  playerRef.current.seekTo(
-                    newTime / playerRef.current.getDuration()
-                  );
-                }}
-              />
+                {isPlaying ? (
+                  <FaPause
+                    className="cursor-pointer text-accentColor rounded p-1"
+                    onClick={() => dispatch(togglePlay())}
+                    size={45}
+                  />
+                ) : (
+                  <FaPlay
+                    className="cursor-pointer text-accentColor rounded p-1"
+                    onClick={() => dispatch(togglePlay())}
+                    size={45}
+                  />
+                )}
+                <RiReplay15Fill
+                  size={40}
+                  className="cursor-pointer text-accentColor rounded-full p-1"
+                  onClick={() => {
+                    const newTime = Math.max(0, localTimePlayed - 15);
+                    setLocalTimePlayed(newTime);
+                    dispatch(setTimePlayed(newTime));
+                    playerRef.current.seekTo(
+                      newTime / playerRef.current.getDuration()
+                    );
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

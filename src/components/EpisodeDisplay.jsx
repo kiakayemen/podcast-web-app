@@ -1,8 +1,6 @@
 "use client";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
-import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
-import { CircleLoader } from "react-spinners";
 import { useState, useRef, useEffect } from "react";
 import { Select, ConfigProvider } from "antd";
 import Image from "next/image";
@@ -18,7 +16,6 @@ import Carousel from "./Carousel";
 import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EpisodeDisplay = ({ id }) => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
@@ -29,49 +26,8 @@ const EpisodeDisplay = ({ id }) => {
   );
   const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
-  const [localTimePlayed, setLocalTimePlayed] = useState(0);
-  const [percentagePlayed, setPercentagePlayed] = useState(0);
   const [volume, setVolume] = useState(100);
-  const [isDragging, setIsDragging] = useState(false);
   const convertTime = useConvertTime();
-
-  const handleMouseDown = () => setIsDragging(true);
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const progressBar = e.currentTarget;
-    const boundingRect = progressBar.getBoundingClientRect(); // Get the progress bar's dimensions
-    const clickX = e.clientX - boundingRect.left; // Mouse X position relative to the progress bar
-    const barWidth = progressBar.offsetWidth;
-    const progressFraction = clickX / barWidth; // Fraction of progress bar clicked
-    const clampedProgressFraction = Math.min(1, Math.max(0, progressFraction));
-    const duration = playerRef.current?.getDuration();
-    setPercentagePlayed(clampedProgressFraction * 100);
-    setLocalTimePlayed(clampedProgressFraction * duration);
-    dispatch(setTimePlayed(localTimePlayed));
-  };
-
-  const handleMouseUp = (e) => {
-    const progressBar = e.currentTarget;
-    const boundingRect = progressBar.getBoundingClientRect();
-    const clickX = e.clientX - boundingRect.left;
-    const barWidth = progressBar.offsetWidth;
-    const progressFraction = clickX / barWidth;
-    const clampedProgressFraction = Math.min(1, Math.max(0, progressFraction));
-    setIsDragging(false);
-    playerRef.current?.seekTo(clampedProgressFraction);
-  };
-
-  useEffect(() => {
-    if (playerRef.current && timePlayed !== null) {
-      playerRef.current.seekTo(timePlayed, "seconds");
-    }
-  }, [timePlayed]);
-
-  // Sync `localTimePlayed` with `timePlayed` in Redux
-  useEffect(() => {
-    setLocalTimePlayed(timePlayed);
-  }, [timePlayed]);
 
   return (
     <>
@@ -132,58 +88,6 @@ const EpisodeDisplay = ({ id }) => {
         {/* volume  */}
         <div className="flex gap-2 w-1/6 justify-evenly items-center">
           <VolumeControl volume={volume} setVolume={setVolume} />
-          {/* playback rate */}
-          <ConfigProvider
-            theme={{
-              token: {
-                colorText: "#ffffff",
-                colorBgContainer: "#121826",
-                colorBgElevated: "#121826",
-                colorTextQuaternary: "#fff",
-              },
-              components: {
-                Select: {
-                  selectorBg: "#121826",
-                  optionActiveBg: "#2c3958",
-                  optionSelectedBg: "#2c3958",
-                },
-              },
-            }}
-          >
-            <Select
-              defaultValue={`x${playbackRate}`}
-              style={{
-                width: 80,
-              }}
-              onChange={(rate) => setPlaybackRate(rate)}
-              options={[
-                {
-                  value: 0.5,
-                  label: "x0.5",
-                },
-                {
-                  value: 1,
-                  label: "x1",
-                },
-                {
-                  value: 1.25,
-                  label: "x1.25",
-                },
-                {
-                  value: 1.5,
-                  label: "x1.5",
-                },
-                {
-                  value: 1.75,
-                  label: "x1.75",
-                },
-                {
-                  value: 2,
-                  label: "x2",
-                },
-              ]}
-            />
-          </ConfigProvider>
         </div>
       </div>
       <Carousel id={id} />
