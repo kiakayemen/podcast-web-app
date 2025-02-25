@@ -14,6 +14,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'rokhpodcast.ir',
       },
+      {
+        protocol: 'https',
+        hostname: 'podcast.app',
+      }
+
     ],
   },
 };

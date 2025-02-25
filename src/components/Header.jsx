@@ -1,9 +1,18 @@
 import Link from "next/link";
+import Menu from "./Menu";
+import Image from "next/image";
 const Header = () => {
   return (
-    <div className="flex w-full flex-col items-center gap-8 justify-center border-b-2 border-black mt-0 mb-10 pt-10 pb-10">
+    <div className="flex w-full flex-row items-center gap-8 justify-between md:justify-evenly border-b-2 border-black mt-0 mb-10 px-5 pt-10 pb-10">
+      <Menu />
       <Link href={"/"}>
-        <h1 className="text-2xl capitalize font-bold">podcast web app</h1>
+        <Image
+          width={190}
+          height={30}
+          alt="Logo"
+          src={"https://podcast.app/images/logo.svg"}
+          className="grayscale"
+        />
       </Link>
     </div>
   );
