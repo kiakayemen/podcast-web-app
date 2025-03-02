@@ -5,7 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #black;
-  --primary: #20C997;
+  --primary: #20c997;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -24,8 +24,9 @@ a {
   text-decoration: underline;
 }
 
-a:hover{
+a:hover {
   color: var(--primary);
+  text-decoration: none;
 }
 
 @keyframes genie-in {

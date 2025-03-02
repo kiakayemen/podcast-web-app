@@ -19,11 +19,13 @@ const Menu = () => {
     <>
       <nav className="flex items-center justify-between font-bold">
         {/* Desktop Menu */}
-        <div className="hidden h-10 md:flex md:space-x-8">
+        <div className="hidden h-10 text-lg md:flex items-center justify-between md:gap-8">
           {menuItems.map((item) => (
             <div key={item.label} className="group">
-              <Link href={item.href}>{item.label}</Link>
-              <div className="mx-2 transition-all duration-300 group-hover:border-b group-hover:border-blue-50" />
+              <Link className="no-underline" href={item.href}>
+                {item.label}
+              </Link>
+              <div className="mx-2 transition-all duration-200 group-hover:border-b-2 group-hover:border-primary" />
             </div>
           ))}
         </div>
@@ -62,7 +64,7 @@ const Menu = () => {
             <Link
               key={item.label}
               href={item.href}
-              className="hover:text-pink-500 dark:hover:text-pink-300 transition-colors duration-200"
+              className="hover:text-primary transition-colors duration-200"
               onClick={toggleMenu}
             >
               {item.label.toLowerCase()}

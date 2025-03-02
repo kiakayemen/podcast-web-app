@@ -17,14 +17,11 @@ import data from "@/data/data.json";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 
 const EpisodeDisplay = ({ id }) => {
-  const playerRef = useRef(null);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
-  const timePlayed = useSelector((state) => state.player.timePlayed);
   const currentEpisodeId = useSelector(
     (state) => state.player.currentEpisodeId
   );
-  const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
   const [volume, setVolume] = useState(100);
   const convertTime = useConvertTime();
@@ -87,7 +84,6 @@ const EpisodeDisplay = ({ id }) => {
         </div>
         {/* volume  */}
         <div className="flex gap-2 w-1/6 justify-evenly items-center">
-          <VolumeControl volume={volume} setVolume={setVolume} />
         </div>
       </div>
       <Carousel id={id} />

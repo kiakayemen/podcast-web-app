@@ -8,8 +8,13 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
-import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
+import {
+  setTimePlayed,
+  setPlaybackRate,
+  togglePlay,
+} from "@/features/slices/playerSlice";
 import useConvertTime from "@/lib/hooks/useConvertTime";
+import VolumeControl from "./VolumeControl";
 import data from "@/data/data.json";
 const ReactPlayer = dynamic(
   () => Promise.resolve(require("react-player").default),
@@ -20,15 +25,15 @@ const Player = () => {
   const playerRef = useRef(null);
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
+  const storeVolume = useSelector((state) => state.player.storeVolume);
+  const playbackRate = useSelector((state) => state.player.playbackRate);
   const timePlayed = useSelector((state) => state.player.timePlayed);
   const currentEpisodeId = useSelector(
     (state) => state.player.currentEpisodeId
   );
-  const [playbackRate, setPlaybackRate] = useState(1);
   const [loaded, setLoaded] = useState(0);
   const [localTimePlayed, setLocalTimePlayed] = useState(0);
   const [percentagePlayed, setPercentagePlayed] = useState(0);
-  const [volume, setVolume] = useState(100);
   const [isDragging, setIsDragging] = useState(false);
   const convertTime = useConvertTime();
   const [isMobileModalOpen, setMobileModalOpen] = useState(false);
@@ -51,6 +56,11 @@ const Player = () => {
       setIsAnimating(false);
     }, 200); // Match animation duration
   };
+
+  if (currentEpisodeId !== null) {
+    const titleLength = data.episodes[currentEpisodeId].title.length;
+    console.log(titleLength);
+  }
 
   // use Space key to togglePlay
   useEffect(() => {
@@ -120,7 +130,7 @@ const Player = () => {
             }
           }}
           className="hidden"
-          volume={volume / 100}
+          volume={storeVolume / 100}
           progressInterval={100}
           controls={false}
           playbackRate={playbackRate}
@@ -128,7 +138,6 @@ const Player = () => {
           height="50px"
           playing={isPlaying}
           url={data.episodes[currentEpisodeId].audioSrc}
-          // url="/media/audio-file.mp3"
         />
       )}
       {/* bottom fixed player on Mobile */}
@@ -166,7 +175,11 @@ const Player = () => {
               />
             </div>
             <div className="flex flex-col">
-              <p className="text-md">{data.episodes[currentEpisodeId].title}</p>
+              <p className="text-md">
+                {data.episodes[currentEpisodeId].title.length > 40
+                  ? data.episodes[currentEpisodeId].title.slice(0, 40) + "..."
+                  : data.episodes[currentEpisodeId].title}
+              </p>
               <p className="text-sm font-bold">
                 {data.episodes[currentEpisodeId].creator}
               </p>
@@ -294,11 +307,11 @@ const Player = () => {
                   }}
                 >
                   <Select
-                    defaultValue={1}
+                    defaultValue={playbackRate}
                     style={{
                       width: 80,
                     }}
-                    onChange={(rate) => setPlaybackRate(rate)}
+                    onChange={(rate) => dispatch(setPlaybackRate(rate))}
                     options={[
                       {
                         value: 0.5,
@@ -435,8 +448,10 @@ const Player = () => {
                 {convertTime(localTimePlayed)}
               </p>
             </div>
-            {/* controls and playback rate */}
+            {/* controls and playback rate and volume */}
             <div className="flex justify-between items-center gap-6">
+              {/* volume */}
+              <VolumeControl />
               {/* playback rate */}
               <ConfigProvider
                 theme={{
@@ -456,11 +471,11 @@ const Player = () => {
                 }}
               >
                 <Select
-                  defaultValue={1}
+                  defaultValue={playbackRate}
                   style={{
                     width: 80,
                   }}
-                  onChange={(rate) => setPlaybackRate(rate)}
+                  onChange={(rate) => dispatch(setPlaybackRate(rate))}
                   options={[
                     {
                       value: 0.5,

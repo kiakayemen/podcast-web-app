@@ -1,8 +1,12 @@
 "use client";
 import { useState, useRef } from "react";
-import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { setStoreVolume } from "@/features/slices/playerSlice";
+import { ImVolumeMedium, ImVolumeHigh, ImVolumeMute2 } from "react-icons/im";
 
-const VolumeControl = ({ volume, setVolume }) => {
+const VolumeControl = () => {
+  const storeVolume = useSelector((state) => state.player.storeVolume);
+  const dispatch = useDispatch();
   const [isHovered, setIsHovered] = useState(false);
   const hoverRef = useRef(false);
 
@@ -20,6 +24,16 @@ const VolumeControl = ({ volume, setVolume }) => {
     }, 200);
   };
 
+  const handleClick = () => {
+    if (storeVolume !== 0) {
+      dispatch(setStoreVolume(0));
+    } else {
+      dispatch(
+        setStoreVolume(window.localStorage.getItem("localStorageVolume"))
+      );
+    }
+  };
+
   return (
     <div className=" max-sm:hidden relative flex items-center">
       {/* Volume Icon */}
@@ -29,8 +43,15 @@ const VolumeControl = ({ volume, setVolume }) => {
         }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={() => handleClick()}
       >
-        {volume === 0 ? <FaVolumeMute size={24} /> : <FaVolumeUp size={24} />}
+        {storeVolume === 0 ? (
+          <ImVolumeMute2 size={24} />
+        ) : storeVolume <= 60 ? (
+          <ImVolumeMedium size={24} />
+        ) : (
+          <ImVolumeHigh size={24} />
+        )}
       </div>
 
       {/* Tooltip (Slider + Label) */}
@@ -41,14 +62,23 @@ const VolumeControl = ({ volume, setVolume }) => {
           onMouseLeave={handleMouseLeave}
         >
           <input
+            dir="ltr"
             type="range"
             min={0}
             max={100}
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
+            value={storeVolume}
+            onChange={(e) => {
+              dispatch(setStoreVolume(Number(e.target.value)));
+              if (Number(e.target.value) !== 0) {
+                window.localStorage.setItem(
+                  "localStorageVolume",
+                  Number(e.target.value)
+                );
+              }
+            }}
             className="w-32 h-1 bg-black rounded-lg appearance-none cursor-pointer"
           />
-          <p className="text-xs text-center mt-1 font-bold">{volume}%</p>
+          <p className="text-xs text-center mt-1 font-bold">{storeVolume}%</p>
         </div>
       )}
     </div>

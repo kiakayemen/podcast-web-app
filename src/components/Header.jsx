@@ -10,7 +10,7 @@ const Header = () => {
           width={190}
           height={30}
           alt="Logo"
-          src={"https://podcast.app/images/logo.svg"}
+          src={"/Logo.svg"}
           className="grayscale"
         />
       </Link>

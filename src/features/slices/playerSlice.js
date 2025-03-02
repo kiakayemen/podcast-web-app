@@ -6,6 +6,7 @@ const initialState = {
   playbackRate: 1,
   timePlayed: 0,
   percentagePlayed: 0,
+  storeVolume: 100
 };
 
 const playerSlice = createSlice({
@@ -14,6 +15,9 @@ const playerSlice = createSlice({
   reducers: {
     togglePlay(state) {
       state.isPlaying = !state.isPlaying;
+    },
+    setStoreVolume(state,action) {
+      state.storeVolume = action.payload
     },
     setPlaybackRate(state, action) {
       state.playbackRate = action.payload;
@@ -30,5 +34,5 @@ const playerSlice = createSlice({
   },
 });
 
-export const { togglePlay, setPlaybackRate, setTimePlayed, setPercentagePlayed, setCurrentEpisodeId } = playerSlice.actions;
+export const { togglePlay, setStoreVolume, setPlaybackRate, setTimePlayed, setPercentagePlayed, setCurrentEpisodeId } = playerSlice.actions;
 export default playerSlice.reducer;
