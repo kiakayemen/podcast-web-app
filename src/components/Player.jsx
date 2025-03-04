@@ -81,7 +81,7 @@ const Player = () => {
     setTimeout(() => {
       setMobileModalOpen(false);
       setIsAnimating(false);
-    }, 200); // Match animation duration
+    }, 200);
   };
 
   // use Space key to togglePlay
@@ -138,6 +138,48 @@ const Player = () => {
     setLocalTimePlayed(timePlayed);
   }, [timePlayed]);
 
+  useEffect(() => {
+    if ("mediaSession" in navigator && currentEpisodeId !== null) {
+      const episode = data.episodes[currentEpisodeId];
+
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: episode.title,
+        artist: episode.creator,
+        album: episode.podcast,
+        artwork: [
+          { src: episode.thumbnailSrc, sizes: "512x512", type: "image/jpeg" },
+          { src: episode.thumbnailSrc, sizes: "256x256", type: "image/jpeg" },
+          { src: episode.thumbnailSrc, sizes: "128x128", type: "image/jpeg" },
+        ],
+      });
+
+      // Handle control center actions
+      navigator.mediaSession.setActionHandler("play", () =>
+        dispatch(togglePlay())
+      );
+      navigator.mediaSession.setActionHandler("pause", () =>
+        dispatch(togglePlay())
+      );
+    }
+  }, [currentEpisodeId, dispatch]);
+
+  // Update playback state
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if ("mediaSession" in navigator && playerRef.current) {
+      navigator.mediaSession.setPositionState({
+        duration: playerRef.current.getDuration(),
+        playbackRate: playbackRate,
+        position: localTimePlayed,
+      });
+    }
+  }, [localTimePlayed, playbackRate]);
+
   return (
     <>
       {currentEpisodeId !== null && (
@@ -157,6 +199,16 @@ const Player = () => {
               setLoaded(data.loaded);
               setLocalTimePlayed(data.playedSeconds);
               setPercentagePlayed(data.played * 100);
+            }
+          }}
+          onPlay={() => {
+            if ("mediaSession" in navigator) {
+              navigator.mediaSession.playbackState = "playing";
+            }
+          }}
+          onPause={() => {
+            if ("mediaSession" in navigator) {
+              navigator.mediaSession.playbackState = "paused";
             }
           }}
           className="hidden"

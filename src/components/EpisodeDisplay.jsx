@@ -19,8 +19,6 @@ const EpisodeDisplay = ({ id }) => {
   const currentEpisodeId = useSelector(
     (state) => state.player.currentEpisodeId
   );
-  const [loaded, setLoaded] = useState(0);
-  const [volume, setVolume] = useState(100);
   const convertTime = useConvertTime();
 
   return (
@@ -30,16 +28,16 @@ const EpisodeDisplay = ({ id }) => {
           <Image
             width={360}
             height={360}
-            className="rounded-xl"
+            className="w-[300px] sm:w-[360px] rounded-xl"
             alt="Episode Cover"
             src={data.episodes[id].thumbnailSrc}
-          ></Image>
+          />
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl text-center sm:text-right font-bold">
+            <h2 className="text-xl sm:text-2xl text-center sm:text-right font-bold">
               {data.episodes[id].title}
             </h2>
             <div className="flex flex-wrap gap-3">
-              <p className="flex items-center gap-1 text-lg">
+              <p className="flex items-center gap-1 text-base sm:text-lg">
                 {/* duration */}
                 <FaClock size={12} />
                 {convertTime(data.episodes[id].duration)}
@@ -49,14 +47,14 @@ const EpisodeDisplay = ({ id }) => {
                 <FaCalendar size={12} />
                 {data.episodes[id].date}
               </p>
-              <p className="flex items-center gap-1 text-lg capitalize">
+              <p className="flex items-center gap-1 capitalize text-base sm:text-lg">
                 {/* creators */}
                 <FaUserLarge size={12} />
                 {data.episodes[id].speakers}
               </p>
             </div>
             {/* summary */}
-            <p className="text-lg text-right" dir="rtl">
+            <p className=" text-base sm:text-lg text-right">
               {data.episodes[id].summary}{" "}
             </p>
             <div className="flex items-start">
