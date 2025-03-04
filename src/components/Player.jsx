@@ -147,9 +147,9 @@ const Player = () => {
         artist: episode.creator,
         album: episode.podcast,
         artwork: [
-          { src: episode.thumbnailSrc, sizes: "512x512", type: "image/jpeg" },
-          { src: episode.thumbnailSrc, sizes: "256x256", type: "image/jpeg" },
-          { src: episode.thumbnailSrc, sizes: "128x128", type: "image/jpeg" },
+          { src: episode.thumbnailSrc, sizes: "512x512" },
+          { src: episode.thumbnailSrc, sizes: "256x256" },
+          { src: episode.thumbnailSrc, sizes: "128x128" },
         ],
       });
 
