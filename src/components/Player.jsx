@@ -175,7 +175,7 @@ const Player = () => {
         <div
           className={`${
             isMobile && !isMobileModalOpen ? "flex" : "hidden"
-          } fixed flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
+          } fixed z-99 flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
           onClick={() => {
             if (isReady) setMobileModalOpen(true);
           }}
