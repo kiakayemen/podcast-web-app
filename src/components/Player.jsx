@@ -1,7 +1,7 @@
 "use client";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
-import { CircleLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 import { Select, ConfigProvider } from "antd";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import {
 } from "@/features/slices/playerSlice";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 import VolumeControl from "./VolumeControl";
+import { PlayerSkeletonDesktop, PlayerSkeletonMobile } from "./Skeletons";
 import data from "@/data/data.json";
 const ReactPlayer = dynamic(
   () => Promise.resolve(require("react-player").default),
@@ -39,6 +40,32 @@ const Player = () => {
   const [isMobileModalOpen, setMobileModalOpen] = useState(false);
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
+  const [playerKey, setPlayerKey] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+  const [previousEpisodeId, setPreviousEpisodeId] = useState(null);
+
+  useEffect(() => {
+    if (currentEpisodeId !== null) {
+      setPreviousEpisodeId(currentEpisodeId);
+      setPlayerKey((prev) => prev + 1); // Force reinitialization
+      setIsReady(false);
+      dispatch(setTimePlayed(0)); // Reset playback position
+    }
+  }, [currentEpisodeId, dispatch]);
+  // for auto play
+  useEffect(() => {
+    if (isPlaying && isReady && playerRef.current) {
+      const startTime = currentEpisodeId === previousEpisodeId ? timePlayed : 0;
+      playerRef.current.seekTo(startTime, "seconds");
+      const internalPlayer = playerRef.current.getInternalPlayer();
+      if (internalPlayer) internalPlayer.play();
+    }
+  }, [isPlaying, isReady, timePlayed, currentEpisodeId]);
+
+  // the simple and elegant fucking solution that no LLM could think of!!
+  useEffect(() => {
+    dispatch(setTimePlayed(localTimePlayed));
+  }, [isPlaying]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -56,11 +83,6 @@ const Player = () => {
       setIsAnimating(false);
     }, 200); // Match animation duration
   };
-
-  if (currentEpisodeId !== null) {
-    const titleLength = data.episodes[currentEpisodeId].title.length;
-    console.log(titleLength);
-  }
 
   // use Space key to togglePlay
   useEffect(() => {
@@ -106,7 +128,7 @@ const Player = () => {
   };
 
   useEffect(() => {
-    if (playerRef.current && timePlayed !== null) {
+    if (playerRef.current && timePlayed) {
       playerRef.current.seekTo(timePlayed, "seconds");
     }
   }, [timePlayed]);
@@ -120,8 +142,16 @@ const Player = () => {
     <>
       {currentEpisodeId !== null && (
         <ReactPlayer
-          fallback={<CircleLoader color="#1ed760" />}
+          key={playerKey}
           ref={playerRef}
+          onReady={() => {
+            setIsReady(true);
+            if (isPlaying) {
+              const internalPlayer = playerRef.current.getInternalPlayer();
+              internalPlayer?.play();
+            }
+          }}
+          onError={() => setIsReady(false)}
           onProgress={(data) => {
             if (!isDragging) {
               setLoaded(data.loaded);
@@ -146,66 +176,75 @@ const Player = () => {
           className={`${
             isMobile && !isMobileModalOpen ? "flex" : "hidden"
           } fixed flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
-          onClick={() => setMobileModalOpen(true)}
+          onClick={() => {
+            if (isReady) setMobileModalOpen(true);
+          }}
         >
-          <div className="cursor-pointer w-full overflow-hidden flex items-center">
-            <div
-              id="progress-bar"
-              className="h-1 w-full bg-neutral-300 relative rounded-xl overflow-visible"
-            >
-              {/* playing fraction */}
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
-                  transition: "transform",
-                }}
-                className={`z-20 bg-black rounded-s-xl`}
-              ></div>
-            </div>
-          </div>
-          <div className="flex flex-row justify-evenly items-center px-3">
-            <div>
-              <Image
-                src={data.episodes[currentEpisodeId].thumbnailSrc}
-                width={50}
-                height={50}
-                alt={`${data.episodes[currentEpisodeId].title}`}
-              />
-            </div>
-            <div className="flex flex-col">
-              <p className="text-md">
-                {data.episodes[currentEpisodeId].title.length > 40
-                  ? data.episodes[currentEpisodeId].title.slice(0, 40) + "..."
-                  : data.episodes[currentEpisodeId].title}
-              </p>
-              <p className="text-sm font-bold">
-                {data.episodes[currentEpisodeId].creator}
-              </p>
-            </div>
-            <div>
-              {isPlaying ? (
-                <FaPause
-                  className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(togglePlay());
-                  }}
-                  size={30}
-                />
-              ) : (
-                <FaPlay
-                  className="cursor-pointer text-accentColor rounded p-1"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(togglePlay());
-                  }}
-                  size={30}
-                />
-              )}
-            </div>
-          </div>
+          {isReady ? (
+            <>
+              <div className="cursor-pointer w-full overflow-hidden flex items-center">
+                <div
+                  id="progress-bar"
+                  className="h-1 w-full bg-neutral-300 relative rounded-xl overflow-visible"
+                >
+                  {/* playing fraction */}
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
+                      transition: "transform",
+                    }}
+                    className={`z-20 bg-black rounded-s-xl`}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex flex-row justify-evenly items-center px-3">
+                <div>
+                  <Image
+                    src={data.episodes[currentEpisodeId].thumbnailSrc}
+                    width={50}
+                    height={50}
+                    alt={`${data.episodes[currentEpisodeId].title}`}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-md">
+                    {data.episodes[currentEpisodeId].title.length > 40
+                      ? data.episodes[currentEpisodeId].title.slice(0, 40) +
+                        "..."
+                      : data.episodes[currentEpisodeId].title}
+                  </p>
+                  <p className="text-sm font-bold">
+                    {data.episodes[currentEpisodeId].creator}
+                  </p>
+                </div>
+                <div>
+                  {isPlaying ? (
+                    <FaPause
+                      className="cursor-pointer text-accentColor rounded p-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(togglePlay());
+                      }}
+                      size={30}
+                    />
+                  ) : (
+                    <FaPlay
+                      className="cursor-pointer text-accentColor rounded p-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(togglePlay());
+                      }}
+                      size={30}
+                    />
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <PlayerSkeletonMobile />
+          )}
         </div>
       )}
       {/* Mobile Modal */}
@@ -220,7 +259,7 @@ const Player = () => {
           data-modal-overlay
         >
           <div
-            className="bg-white rounded-lg p-6 relative"
+            className="bg-white rounded-lg p-6 relative max-w-[90%]"
             style={{
               transformOrigin: "bottom center",
               animation: `${
@@ -373,181 +412,185 @@ const Player = () => {
         } fixed bottom-0 bg-white px-20 py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
       >
         <div className="w-full">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
-            {currentEpisodeId !== null ? (
-              <>
-                <Link
-                  href={`/podcasts/${data.episodes[currentEpisodeId]?.podcast}/${currentEpisodeId}`}
-                >
-                  <Image
-                    src={data.episodes[currentEpisodeId].thumbnailSrc}
-                    width={80}
-                    height={80}
-                    alt={`${data.episodes[currentEpisodeId]?.title}`}
-                  />
-                </Link>
-                <div className="flex flex-col">
+          {isReady !== true ? (
+            <PlayerSkeletonDesktop />
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
+              {currentEpisodeId !== null ? (
+                <>
                   <Link
-                    href={`/podcasts/${data.episodes[currentEpisodeId].podcast}/${currentEpisodeId}`}
+                    href={`/podcasts/${data.episodes[currentEpisodeId]?.podcast}/${currentEpisodeId}`}
                   >
-                    <p className="text-md">
-                      {data.episodes[currentEpisodeId].title}
-                    </p>
+                    <Image
+                      src={data.episodes[currentEpisodeId].thumbnailSrc}
+                      width={80}
+                      height={80}
+                      alt={`${data.episodes[currentEpisodeId]?.title}`}
+                    />
                   </Link>
-                  <Link
-                    href={`/podcasts/${data.episodes[currentEpisodeId].podcast}`}
-                  >
-                    <p className="text-sm font-bold">
-                      {data.episodes[currentEpisodeId].creator}
-                    </p>
-                  </Link>
-                </div>
-              </>
-            ) : null}
-            {/* progress bar & time */}
-            <div className="flex-1 flex items-center gap-4 w-full group">
-              <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
-                {playerRef.current ? (
-                  convertTime(playerRef.current.getDuration())
-                ) : (
-                  <CircleLoader size={40} color="#1ed760" className="ml-2" />
-                )}
-              </p>
-              {/* progress bar */}
-              <div
-                onMouseDown={(e) => handleMouseDown(e)}
-                onMouseMove={(e) => handleMouseMove(e)}
-                onMouseUp={(e) => handleMouseUp(e)}
-                className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
-              >
+                  <div className="flex flex-col">
+                    <Link
+                      href={`/podcasts/${data.episodes[currentEpisodeId].podcast}/${currentEpisodeId}`}
+                    >
+                      <p className="text-md">
+                        {data.episodes[currentEpisodeId].title}
+                      </p>
+                    </Link>
+                    <Link
+                      href={`/podcasts/${data.episodes[currentEpisodeId].podcast}`}
+                    >
+                      <p className="text-sm font-bold">
+                        {data.episodes[currentEpisodeId].creator}
+                      </p>
+                    </Link>
+                  </div>
+                </>
+              ) : null}
+              {/* progress bar & time */}
+              <div className="flex-1 flex items-center gap-4 w-full group">
+                <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
+                  {playerRef.current ? (
+                    convertTime(playerRef.current.getDuration())
+                  ) : (
+                    <SyncLoader />
+                  )}
+                </p>
+                {/* progress bar */}
                 <div
-                  id="progress-bar"
-                  className="h-1 w-full max-sm:min-w-52 bg-neutral-300 relative rounded-xl overflow-visible"
+                  onMouseDown={(e) => handleMouseDown(e)}
+                  onMouseMove={(e) => handleMouseMove(e)}
+                  onMouseUp={(e) => handleMouseUp(e)}
+                  className="h-3 cursor-pointer w-full overflow-hidden flex items-center"
                 >
-                  {/* playing fraction */}
                   <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
-                      transition: "transform",
-                    }}
-                    className={`z-20 bg-black rounded-s-xl`}
+                    id="progress-bar"
+                    className="h-1 w-full max-sm:min-w-52 bg-neutral-300 relative rounded-xl overflow-visible"
                   >
-                    {/* bullet at the end as an indicator */}
+                    {/* playing fraction */}
                     <div
-                      // style={{
-                      //   left: `${percentagePlayed}%`,
-                      // }}
-                      className="w-3 h-3 z-20 rounded-full opacity-0 flex group-hover:opacity-100 items-center justify-center bg-black -top-1 bottom-0 right-[-6px] absolute transition-all"
-                    ></div>
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
+                        transition: "transform",
+                      }}
+                      className={`z-20 bg-black rounded-s-xl`}
+                    >
+                      {/* bullet at the end as an indicator */}
+                      <div
+                        // style={{
+                        //   left: `${percentagePlayed}%`,
+                        // }}
+                        className="w-3 h-3 z-20 rounded-full opacity-0 flex group-hover:opacity-100 items-center justify-center bg-black -top-1 bottom-0 right-[-6px] absolute transition-all"
+                      ></div>
+                    </div>
                   </div>
                 </div>
+                <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
+                  {convertTime(localTimePlayed)}
+                </p>
               </div>
-              <p className="sm:min-w-[70px] max-sm:text-xs sm:max-w-[70px]">
-                {convertTime(localTimePlayed)}
-              </p>
-            </div>
-            {/* controls and playback rate and volume */}
-            <div className="flex justify-between items-center gap-6">
-              {/* volume */}
-              <VolumeControl />
-              {/* playback rate */}
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorText: "#ffffff",
-                    colorBgContainer: "#121826",
-                    colorBgElevated: "#121826",
-                    colorTextQuaternary: "#fff",
-                  },
-                  components: {
-                    Select: {
-                      selectorBg: "#121826",
-                      optionActiveBg: "#2c3958",
-                      optionSelectedBg: "#2c3958",
+              {/* controls and playback rate and volume */}
+              <div className="flex justify-between items-center gap-6">
+                {/* volume */}
+                <VolumeControl />
+                {/* playback rate */}
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorText: "#ffffff",
+                      colorBgContainer: "#121826",
+                      colorBgElevated: "#121826",
+                      colorTextQuaternary: "#fff",
                     },
-                  },
-                }}
-              >
-                <Select
-                  defaultValue={playbackRate}
-                  style={{
-                    width: 80,
+                    components: {
+                      Select: {
+                        selectorBg: "#121826",
+                        optionActiveBg: "#2c3958",
+                        optionSelectedBg: "#2c3958",
+                      },
+                    },
                   }}
-                  onChange={(rate) => dispatch(setPlaybackRate(rate))}
-                  options={[
-                    {
-                      value: 0.5,
-                      label: "x0.5",
-                    },
-                    {
-                      value: 1,
-                      label: "x1",
-                    },
-                    {
-                      value: 1.25,
-                      label: "x1.25",
-                    },
-                    {
-                      value: 1.5,
-                      label: "x1.5",
-                    },
-                    {
-                      value: 1.75,
-                      label: "x1.75",
-                    },
-                    {
-                      value: 2,
-                      label: "x2",
-                    },
-                  ]}
-                />
-              </ConfigProvider>
-              <div className="flex gap-3 items-center">
-                <RiForward15Fill
-                  size={40}
-                  className="cursor-pointer text-accentColor rounded-full p-1"
-                  onClick={() => {
-                    const newTime = Math.min(
-                      playerRef.current.getDuration(),
-                      localTimePlayed + 15
-                    );
-                    setLocalTimePlayed(newTime);
-                    dispatch(setTimePlayed(newTime));
-                    playerRef.current.seekTo(
-                      newTime / playerRef.current.getDuration()
-                    );
-                  }}
-                />
-                {isPlaying ? (
-                  <FaPause
-                    className="cursor-pointer text-accentColor rounded p-1"
-                    onClick={() => dispatch(togglePlay())}
-                    size={45}
+                >
+                  <Select
+                    defaultValue={playbackRate}
+                    style={{
+                      width: 80,
+                    }}
+                    onChange={(rate) => dispatch(setPlaybackRate(rate))}
+                    options={[
+                      {
+                        value: 0.5,
+                        label: "x0.5",
+                      },
+                      {
+                        value: 1,
+                        label: "x1",
+                      },
+                      {
+                        value: 1.25,
+                        label: "x1.25",
+                      },
+                      {
+                        value: 1.5,
+                        label: "x1.5",
+                      },
+                      {
+                        value: 1.75,
+                        label: "x1.75",
+                      },
+                      {
+                        value: 2,
+                        label: "x2",
+                      },
+                    ]}
                   />
-                ) : (
-                  <FaPlay
-                    className="cursor-pointer text-accentColor rounded p-1"
-                    onClick={() => dispatch(togglePlay())}
-                    size={45}
+                </ConfigProvider>
+                <div className="flex gap-3 items-center">
+                  <RiForward15Fill
+                    size={40}
+                    className="cursor-pointer text-accentColor rounded-full p-1"
+                    onClick={() => {
+                      const newTime = Math.min(
+                        playerRef.current.getDuration(),
+                        localTimePlayed + 15
+                      );
+                      setLocalTimePlayed(newTime);
+                      dispatch(setTimePlayed(newTime));
+                      playerRef.current.seekTo(newTime, "seconds");
+                    }}
                   />
-                )}
-                <RiReplay15Fill
-                  size={40}
-                  className="cursor-pointer text-accentColor rounded-full p-1"
-                  onClick={() => {
-                    const newTime = Math.max(0, localTimePlayed - 15);
-                    setLocalTimePlayed(newTime);
-                    dispatch(setTimePlayed(newTime));
-                    playerRef.current.seekTo(
-                      newTime / playerRef.current.getDuration()
-                    );
-                  }}
-                />
+                  {isPlaying ? (
+                    <FaPause
+                      className="cursor-pointer text-accentColor rounded p-1"
+                      onClick={() => {
+                        dispatch(togglePlay());
+                      }}
+                      size={45}
+                    />
+                  ) : (
+                    <FaPlay
+                      className="cursor-pointer text-accentColor rounded p-1"
+                      onClick={() => {
+                        dispatch(togglePlay());
+                      }}
+                      size={45}
+                    />
+                  )}
+                  <RiReplay15Fill
+                    size={40}
+                    className="cursor-pointer text-accentColor rounded-full p-1"
+                    onClick={() => {
+                      const newTime = Math.max(0, localTimePlayed - 15);
+                      setLocalTimePlayed(newTime);
+                      dispatch(setTimePlayed(newTime));
+                      playerRef.current.seekTo(newTime, "seconds");
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

@@ -48,7 +48,7 @@ const Carousel = ({ id }) => {
           {items.map((item) => (
             <button
               key={item.id}
-              className={`text-sm py-6 relative shrink-0 w-48 p-2 text-center border rounded-md ${
+              className={`text-sm sm:py-6 py-3 relative shrink-0 sm:w-48 w-40 p-2 text-center border rounded-md ${
                 activeItem === item.id
                   ? "bg-black text-white"
                   : "border-foreground"
@@ -68,29 +68,29 @@ const Carousel = ({ id }) => {
         </div>
         {/* Navigation Arrows */}
         <button
-          className="absolute left-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full text-black hover:text-white hover:bg-black transition border border-black"
+          className="absolute left-[-35px] sm:left-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full text-black hover:text-white hover:bg-black transition border border-black"
           onClick={() => {
             document
               .querySelector(".scrollbar-hide")
-              .scrollBy({ left: -250, behavior: "smooth" });
+              .scrollBy({ left: -200, behavior: "smooth" });
           }}
         >
           <MdArrowBackIos
-            size={25}
-            className="transition duration-200 hover:text-accentColor"
+            size={24}
+            className="transition duration-200 hover:text-accentColor w-4 sm:w-6"
           />
         </button>
         <button
-          className="absolute right-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full border-black border text-black hover:text-white hover:bg-black transition"
+          className="absolute right-[-35px] sm:right-[-45px] top-1/2 -translate-y-1/2 p-2 rounded-full border-black border text-black hover:text-white hover:bg-black transition"
           onClick={() => {
             document
               .querySelector(".scrollbar-hide")
-              .scrollBy({ left: 250, behavior: "smooth" });
+              .scrollBy({ left: 200, behavior: "smooth" });
           }}
         >
           <MdArrowForwardIos
-            size={25}
-            className="transition duration-200 hover:text-accentColor"
+            size={24}
+            className="transition duration-200 hover:text-accentColor sm:w-6 w-4"
           />
         </button>
       </div>

@@ -1,16 +1,13 @@
 "use client";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
-import { useState, useRef, useEffect } from "react";
-import { Select, ConfigProvider } from "antd";
+import { useState } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
-import VolumeControl from "./VolumeControl";
 import {
-  setTimePlayed,
   togglePlay,
   setCurrentEpisodeId,
+  setTimePlayed,
 } from "@/features/slices/playerSlice";
 import Carousel from "./Carousel";
 import data from "@/data/data.json";
@@ -66,8 +63,15 @@ const EpisodeDisplay = ({ id }) => {
               <button
                 className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background border-2 border-black gap-3 rounded py-2 px-4 hover:bg-black hover:text-white duration-200"
                 onClick={() => {
-                  dispatch(setCurrentEpisodeId(data.episodes[id].id));
-                  dispatch(togglePlay());
+                  if (currentEpisodeId !== data.episodes[id].id) {
+                    dispatch(setCurrentEpisodeId(data.episodes[id].id));
+                    dispatch(setTimePlayed(0));
+                    setTimeout(() => {
+                      dispatch(togglePlay());
+                    }, 100); // Allow state propagation
+                  } else {
+                    dispatch(togglePlay());
+                  }
                 }}
               >
                 {isPlaying && currentEpisodeId === data.episodes[id].id ? (
@@ -83,8 +87,7 @@ const EpisodeDisplay = ({ id }) => {
           </div>
         </div>
         {/* volume  */}
-        <div className="flex gap-2 w-1/6 justify-evenly items-center">
-        </div>
+        <div className="flex gap-2 w-1/6 justify-evenly items-center"></div>
       </div>
       <Carousel id={id} />
     </>

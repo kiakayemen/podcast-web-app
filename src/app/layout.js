@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Loading from "@/app/loading";
+import Loading from "@/components/loading";
 import "./globals.css";
 import StoreProvider from "./storeProvider";
 import Header from "@/components/Header";
@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
         <body className={`select-none antialiased w-[100vw] h-full bg-white`}>
           <Header />
           <Suspense fallback={<Loading />}>
-            <div className="px-5 pb-40">
+            <div className="px-5 pb-40tr">
               {children}
               <Player />
             </div>
