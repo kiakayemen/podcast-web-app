@@ -1,7 +1,6 @@
 "use client";
 import { FaPlay, FaPause, FaCalendar } from "react-icons/fa";
 import { FaUserLarge, FaClock } from "react-icons/fa6";
-import { useState } from "react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -59,7 +58,7 @@ const EpisodeDisplay = ({ id }) => {
             </p>
             <div className="flex items-start">
               <button
-                className="flex max-sm:justify-center max-sm:w-full w-44 items-center text-background border-2 border-black gap-3 rounded py-2 px-4 hover:bg-black hover:text-white duration-200"
+                className="flex max-sm:justify-center max-sm:w-full w-44 items-center border-2 gap-3 rounded-lg py-2 px-4 dark:border-dark dark:hover:bg-primary-dark dark:hover:text-neutral-dark border-black hover:bg-black hover:text-white duration-200"
                 onClick={() => {
                   if (currentEpisodeId !== data.episodes[id].id) {
                     dispatch(setCurrentEpisodeId(data.episodes[id].id));

@@ -2,43 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #black;
-  --primary: #20c997;
-}
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #121826;
-    --foreground: #ededed;
+/* Custom base styles */
+@layer base {
+  body {
+    @apply transition-colors ease-in-out duration-200;
   }
-} */
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+  /* Disable transitions for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    :where(:not(.animation-safe)) {
+      transition-duration: 1ms !important;
+      animation-duration: 1ms !important;
+    }
+  }
+
+  a {
+    @apply underline hover:text-primary-dark hover:no-underline duration-100;
+  }
 }
 
-a {
-  text-decoration: underline;
+/* Custom animations */
+@layer utilities {
+  /* for dark mode transition */
+  .transition-colors {
+    transition-property: color, background-color, border-color, fill, stroke,
+      opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  /* Genie animation for modal/popup effects */
+  .animate-genie-in {
+    animation: genie-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-genie-out {
+    animation: genie-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-genie-in,
+  .animate-genie-out {
+    will-change: transform, opacity, border-radius;
+  }
+
+  /* Enhanced pulse animation */
+  .animate-pulse {
+    animation: pulse 1s cubic-bezier(0.33, 0, 0.67, 1) infinite;
+  }
+
+  /* Shimmer loading effect */
+  .animate-shimmer {
+    animation: shimmer 1s linear infinite;
+  }
 }
 
-a:hover {
-  color: var(--primary);
-  text-decoration: none;
-}
-
+/* Animation keyframes */
 @keyframes genie-in {
   0% {
-    transform: scaleY(1) scaleX(0) translateY(100%);
+    transform: scaleY(0.4) scaleX(0.4) translateY(100%);
     opacity: 0;
-    border-radius: 0.5rem 0.5rem 100% 100%;
+    border-radius: 100%;
   }
   100% {
     transform: scaleY(1) scaleX(1) translateY(0);
     opacity: 1;
-    border-radius: 0.5rem;
+    border-radius: theme("borderRadius.lg");
   }
 }
 
@@ -46,12 +74,12 @@ a:hover {
   0% {
     transform: scaleY(1) scaleX(1) translateY(0);
     opacity: 1;
-    border-radius: 0.5rem;
+    border-radius: theme("borderRadius.lg");
   }
   100% {
-    transform: scaleY(1) scaleX(0) translateY(100%);
+    transform: scaleY(0.4) scaleX(0.4) translateY(100%);
     opacity: 0;
-    border-radius: 0.5rem 0.5rem 100% 100%;
+    border-radius: 100%;
   }
 }
 
@@ -65,17 +93,11 @@ a:hover {
   }
 }
 
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
 @keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
   100% {
     transform: translateX(100%);
-  }
-}
-
-@layer utilities {
-  .animate-shimmer {
-    animation: shimmer 2s infinite linear;
   }
 }

@@ -44,7 +44,9 @@ const Menu = () => {
             {[...Array(3)].map((_, i) => (
               <span
                 key={i}
-                className={styles[`hamburger${["Top", "Middle", "Bottom"][i]}`]}
+                className={`dark:bg-neutral-light ${
+                  styles[`hamburger${["Top", "Middle", "Bottom"][i]}`]
+                }`}
               />
             ))}
           </button>
@@ -54,7 +56,7 @@ const Menu = () => {
         <div
           id="mobile-menu"
           aria-hidden={!menuOpen}
-          className={`fixed top-0 right-0 h-screen w-full bg-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`fixed top-0 right-0 h-screen w-full dark:bg-dark-elevated bg-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             menuOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0"

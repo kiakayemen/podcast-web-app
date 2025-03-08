@@ -2,19 +2,15 @@
 import { FaPlay, FaPause } from "react-icons/fa";
 import { RiForward15Fill, RiReplay15Fill } from "react-icons/ri";
 import { SyncLoader } from "react-spinners";
-import { Select, ConfigProvider } from "antd";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setTimePlayed,
-  setPlaybackRate,
-  togglePlay,
-} from "@/features/slices/playerSlice";
+import { setTimePlayed, togglePlay } from "@/features/slices/playerSlice";
 import useConvertTime from "@/lib/hooks/useConvertTime";
 import VolumeControl from "./VolumeControl";
+import PlaybackRateSelect from "./PlaybackRateSelect";
 import { PlayerSkeletonDesktop, PlayerSkeletonMobile } from "./Skeletons";
 import data from "@/data/data.json";
 const ReactPlayer = dynamic(
@@ -227,7 +223,7 @@ const Player = () => {
         <div
           className={`${
             isMobile && !isMobileModalOpen ? "flex" : "hidden"
-          } fixed z-99 flex-col justify-between w-full tracking-tighter pb-6 min-h-24 bg-white left-0 bottom-0 right-0`}
+          } fixed z-99 flex-col justify-between w-full tracking-tighter pb-6 min-h-24 dark:bg-dark-elevated dark:text-dark bg-white text-neutral-dark left-0 bottom-0 right-0 transition-colors duration-200`}
           onClick={() => {
             if (isReady) setMobileModalOpen(true);
           }}
@@ -247,7 +243,7 @@ const Player = () => {
                       transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
                       transition: "transform",
                     }}
-                    className={`z-20 bg-black rounded-s-xl`}
+                    className={`z-20 bg-primary dark:bg-primary-dark rounded-s-xl`}
                   ></div>
                 </div>
               </div>
@@ -302,7 +298,7 @@ const Player = () => {
       {/* Mobile Modal */}
       {isMobileModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 sm:hidden"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 sm:hidden"
           onClick={(e) => {
             if (e.target.dataset.modalOverlay) {
               handleModalClose();
@@ -311,7 +307,7 @@ const Player = () => {
           data-modal-overlay
         >
           <div
-            className="bg-white rounded-lg p-6 relative max-w-[90%]"
+            className="bg-white dark:bg-dark-elevated rounded-lg p-6 relative max-w-[90%]"
             style={{
               transformOrigin: "bottom center",
               animation: `${
@@ -365,7 +361,7 @@ const Player = () => {
                       transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
                       transition: "transform",
                     }}
-                    className="z-20 bg-black rounded-s-xl"
+                    className="z-20 bg-primary dark:bg-primary-dark rounded-s-xl"
                   >
                     {/* bullet at the end as an indicator */}
                     <div
@@ -380,57 +376,7 @@ const Player = () => {
               {/* controls and playback rate */}
               <div className="flex justify-between items-center mt-4">
                 {/* playback rate */}
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      colorText: "#ffffff",
-                      colorBgContainer: "#121826",
-                      colorBgElevated: "#121826",
-                      colorTextQuaternary: "#fff",
-                    },
-                    components: {
-                      Select: {
-                        selectorBg: "#121826",
-                        optionActiveBg: "#2c3958",
-                        optionSelectedBg: "#2c3958",
-                      },
-                    },
-                  }}
-                >
-                  <Select
-                    defaultValue={playbackRate}
-                    style={{
-                      width: 80,
-                    }}
-                    onChange={(rate) => dispatch(setPlaybackRate(rate))}
-                    options={[
-                      {
-                        value: 0.5,
-                        label: "x0.5",
-                      },
-                      {
-                        value: 1,
-                        label: "x1",
-                      },
-                      {
-                        value: 1.25,
-                        label: "x1.25",
-                      },
-                      {
-                        value: 1.5,
-                        label: "x1.5",
-                      },
-                      {
-                        value: 1.75,
-                        label: "x1.75",
-                      },
-                      {
-                        value: 2,
-                        label: "x2",
-                      },
-                    ]}
-                  />
-                </ConfigProvider>
+                <PlaybackRateSelect />
                 {/* Controls */}
                 <div className="flex gap-2">
                   <RiForward15Fill
@@ -461,7 +407,7 @@ const Player = () => {
       <div
         className={`${
           currentEpisodeId === null || isMobile ? "hidden" : "flex"
-        } fixed bottom-0 bg-white px-20 py-5 border-t-2 border-black right-0 left-0 flex items-center justify-center`}
+        } fixed bottom-0 dark:bg-dark-elevated dark:text-dark bg-white text-neutral-dark px-20 py-5 border-t-2 border-black dark:border-dark right-0 left-0 flex items-center justify-center transition-colors duration-200`}
       >
         <div className="w-full">
           {isReady !== true ? (
@@ -526,14 +472,14 @@ const Player = () => {
                         transform: `translateX(calc(-100% + ${percentagePlayed}%))`,
                         transition: "transform",
                       }}
-                      className={`z-20 bg-black rounded-s-xl`}
+                      className={`z-20 bg-primary dark:bg-primary-dark rounded-s-xl`}
                     >
                       {/* bullet at the end as an indicator */}
                       <div
                         // style={{
                         //   left: `${percentagePlayed}%`,
                         // }}
-                        className="w-3 h-3 z-20 rounded-full opacity-0 flex group-hover:opacity-100 items-center justify-center bg-black -top-1 bottom-0 right-[-6px] absolute transition-all"
+                        className="w-3 h-3 z-20 rounded-full opacity-0 flex group-hover:opacity-100 items-center justify-center bg-black dark:bg-neutral-light -top-1 bottom-0 right-[-6px] absolute transition-all"
                       ></div>
                     </div>
                   </div>
@@ -547,57 +493,7 @@ const Player = () => {
                 {/* volume */}
                 <VolumeControl />
                 {/* playback rate */}
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      colorText: "#ffffff",
-                      colorBgContainer: "#121826",
-                      colorBgElevated: "#121826",
-                      colorTextQuaternary: "#fff",
-                    },
-                    components: {
-                      Select: {
-                        selectorBg: "#121826",
-                        optionActiveBg: "#2c3958",
-                        optionSelectedBg: "#2c3958",
-                      },
-                    },
-                  }}
-                >
-                  <Select
-                    defaultValue={playbackRate}
-                    style={{
-                      width: 80,
-                    }}
-                    onChange={(rate) => dispatch(setPlaybackRate(rate))}
-                    options={[
-                      {
-                        value: 0.5,
-                        label: "x0.5",
-                      },
-                      {
-                        value: 1,
-                        label: "x1",
-                      },
-                      {
-                        value: 1.25,
-                        label: "x1.25",
-                      },
-                      {
-                        value: 1.5,
-                        label: "x1.5",
-                      },
-                      {
-                        value: 1.75,
-                        label: "x1.75",
-                      },
-                      {
-                        value: 2,
-                        label: "x2",
-                      },
-                    ]}
-                  />
-                </ConfigProvider>
+                <PlaybackRateSelect />
                 <div className="flex gap-3 items-center">
                   <RiForward15Fill
                     size={40}

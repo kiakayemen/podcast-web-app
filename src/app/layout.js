@@ -20,8 +20,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl" className={IRANSans.className}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const storedTheme = localStorage.getItem('theme');
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = storedTheme || (systemDark ? 'dark' : 'light');
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+              })();
+            `,
+          }}
+        />
+      </head>
       <StoreProvider>
-        <body className={`select-none antialiased w-[100vw] h-full bg-white`}>
+        <body
+          className={`select-none antialiased w-[100vw] h-full bg-neutral-light dark:bg-neutral-dark-bg text-neutral-dark dark:text-neutral-dark-text`}
+        >
           <Header />
           <Suspense fallback={<Loading />}>
             <div className="px-5 pb-36">

@@ -8,77 +8,85 @@ const VolumeControl = () => {
   const storeVolume = useSelector((state) => state.player.storeVolume);
   const dispatch = useDispatch();
   const [isHovered, setIsHovered] = useState(false);
-  const hoverRef = useRef(false);
+  const hoverTimeout = useRef(null);
 
   const handleMouseEnter = () => {
-    hoverRef.current = true;
+    clearTimeout(hoverTimeout.current);
     setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
-    hoverRef.current = false;
-    setTimeout(() => {
-      if (!hoverRef.current) {
-        setIsHovered(false);
-      }
-    }, 200);
+    hoverTimeout.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 300);
   };
 
   const handleClick = () => {
-    if (storeVolume !== 0) {
-      dispatch(setStoreVolume(0));
-    } else {
-      dispatch(
-        setStoreVolume(window.localStorage.getItem("localStorageVolume"))
-      );
+    const newVolume =
+      storeVolume === 0 ? localStorage.getItem("localStorageVolume") || 100 : 0;
+    dispatch(setStoreVolume(newVolume));
+    if (newVolume !== 0) {
+      localStorage.setItem("localStorageVolume", newVolume);
     }
   };
 
   return (
-    <div className=" max-sm:hidden relative flex items-center">
+    <div
+      className="group relative flex items-center max-sm:hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Volume Icon */}
-      <div
-        className={`cursor-pointer ${
-          isHovered ? "text-accentColor" : "text-black"
+      <button
+        className={`p-1.5 rounded-full transition-all duration-200 ${
+          isHovered
+            ? "bg-neutral-dark-hover dark:bg-neutral-dark-secondary"
+            : ""
         }`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={() => handleClick()}
+        onClick={handleClick}
       >
         {storeVolume === 0 ? (
-          <ImVolumeMute2 size={24} />
-        ) : storeVolume <= 60 ? (
-          <ImVolumeMedium size={24} />
-        ) : (
-          <ImVolumeHigh size={24} />
-        )}
-      </div>
-
-      {/* Tooltip (Slider + Label) */}
-      {isHovered && (
-        <div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-white text-black border-2 border-black p-2 rounded shadow-lg"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <input
-            dir="ltr"
-            type="range"
-            min={0}
-            max={100}
-            value={storeVolume}
-            onChange={(e) => {
-              dispatch(setStoreVolume(Number(e.target.value)));
-              if (Number(e.target.value) !== 0) {
-                window.localStorage.setItem(
-                  "localStorageVolume",
-                  Number(e.target.value)
-                );
-              }
-            }}
-            className="w-32 h-1 bg-black rounded-lg appearance-none cursor-pointer"
+          <ImVolumeMute2
+            className={`${
+              isHovered ? "text-primary-dark dark:text-primary-dark " : ""
+            } w-6 h-6 text-neutral-dark dark:text-neutral-dark-text-secondary transition-colors`}
           />
-          <p className="text-xs text-center mt-1 font-bold">{storeVolume}%</p>
+        ) : storeVolume <= 60 ? (
+          <ImVolumeMedium
+            className={`${
+              isHovered ? "text-primary-dark dark:text-primary-dark " : ""
+            } w-6 h-6 text-neutral-dark dark:text-neutral-dark-text-secondary transition-colors`}
+          />
+        ) : (
+          <ImVolumeHigh
+            className={`${
+              isHovered ? "text-primary-dark dark:text-primary-dark " : ""
+            } w-6 h-6 text-neutral-dark dark:text-neutral-dark-text-secondary transition-colors`}
+          />
+        )}
+      </button>
+
+      {/* Volume Slider */}
+      {isHovered && (
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-neutral-light dark:bg-neutral-dark-secondary p-3 rounded-lg shadow-xl border border-neutral-dark-hover dark:border-neutral-dark-hover">
+          <div className="flex flex-col items-center space-y-2">
+            <input
+              dir="ltr"
+              type="range"
+              min="0"
+              max="100"
+              value={storeVolume}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                dispatch(setStoreVolume(value));
+                localStorage.setItem("localStorageVolume", value);
+              }}
+              className="w-28 h-1 bg-neutral-dark-hover dark:bg-neutral-dark rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-neutral-dark-text dark:[&::-webkit-slider-thumb]:bg-primary-dark [&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:transition-transform"
+            />
+            <span className="text-xs font-medium text-neutral-dark dark:text-neutral-dark-text-secondary">
+              {storeVolume}%
+            </span>
+          </div>
         </div>
       )}
     </div>
